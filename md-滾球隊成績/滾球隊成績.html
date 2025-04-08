@@ -4072,9 +4072,10 @@ is now available!
 
 <h1 id="滾球隊成績">滾球隊成績<a class="headerlink" href="#滾球隊成績" title="Permanent link"></a></h1>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tk</span><span class="p">,</span> <span class="n">filedialog</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tk</span><span class="p">,</span> <span class="n">filedialog</span><span class="p">,</span> <span class="n">Button</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tkinter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ttk</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fitz</span>  <span class="c1"># PyMuPDF</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">openpyxl</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workbook</span>
 
@@ -4086,51 +4087,51 @@ is now available!
         <span class="k">return</span> <span class="kc">False</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_average_row</span><span class="p">(</span><span class="n">ws</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    檢查並刪除工作表中包含「總分」文字的行及之後的所有行（不包含總分行）。</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">row_num</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ws</span><span class="o">.</span><span class="n">iter_rows</span><span class="p">(</span><span class="n">min_row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_col</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="s1">&#39;總分&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">row_to_delete</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">row_num</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ws</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="n">ws</span><span class="o">.</span><span class="n">delete_rows</span><span class="p">(</span><span class="n">row_num</span><span class="p">)</span>
             <span class="k">break</span>
 
-<span class="c1"># 啟用 tkinter 檔案選擇視窗</span>
-<span class="n">root</span> <span class="o">=</span> <span class="n">Tk</span><span class="p">()</span>
-<span class="n">root</span><span class="o">.</span><span class="n">withdraw</span><span class="p">()</span>
-<span class="n">pdf_paths</span> <span class="o">=</span> <span class="n">filedialog</span><span class="o">.</span><span class="n">askopenfilenames</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;選擇一個或多個 PDF 檔案&quot;</span><span class="p">,</span>
-    <span class="n">filetypes</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;PDF Files&quot;</span><span class="p">,</span> <span class="s2">&quot;*.pdf&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;All Files&quot;</span><span class="p">,</span> <span class="s2">&quot;*.*&quot;</span><span class="p">)]</span>
-<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start_conversion</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">start_button</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">,</span> <span class="n">progress_label</span><span class="p">):</span>
+    <span class="c1"># 禁用按鈕並顯示禁用效果</span>
+    <span class="n">start_button</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="s2">&quot;disabled&quot;</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;sunken&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;轉檔中...&quot;</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="ow">not</span> <span class="n">pdf_paths</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ 沒有選擇任何 PDF，程序結束。&quot;</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="c1"># 建立以時間命名的資料夾</span>
+    <span class="c1"># 啟用 tkinter 檔案選擇視窗</span>
+    <span class="n">pdf_paths</span> <span class="o">=</span> <span class="n">filedialog</span><span class="o">.</span><span class="n">askopenfilenames</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;選擇一個或多個 PDF 檔案&quot;</span><span class="p">,</span>
+        <span class="n">filetypes</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;PDF Files&quot;</span><span class="p">,</span> <span class="s2">&quot;*.pdf&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;All Files&quot;</span><span class="p">,</span> <span class="s2">&quot;*.*&quot;</span><span class="p">)]</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pdf_paths</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ 沒有選擇任何 PDF，程序結束。&quot;</span><span class="p">)</span>
+        <span class="n">start_button</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;raised&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;開始轉換&quot;</span><span class="p">)</span>  <span class="c1"># 重新啟用按鈕</span>
+        <span class="k">return</span>
+
     <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S&quot;</span><span class="p">)</span>
-    <span class="n">output_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;D:</span><span class="se">\\</span><span class="s2">下載&quot;</span><span class="p">)</span>  <span class="c1"># 儲存位置為下載資料夾</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">output_folder</span> <span class="o">=</span> <span class="n">filedialog</span><span class="o">.</span><span class="n">askdirectory</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;選擇儲存的資料夾&quot;</span><span class="p">)</span>  <span class="c1"># 讓使用者選擇儲存位置</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">output_folder</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ 沒有選擇儲存資料夾，程序結束。&quot;</span><span class="p">)</span>
+        <span class="n">start_button</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;raised&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;開始轉換&quot;</span><span class="p">)</span>  <span class="c1"># 重新啟用按鈕</span>
+        <span class="k">return</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;📄 開始擷取 PDF 文字並寫入 Excel...&quot;</span><span class="p">)</span>
 
-    <span class="c1"># 建立一個 Excel 工作簿，所有處理結果放在這個工作簿</span>
     <span class="n">wb</span> <span class="o">=</span> <span class="n">Workbook</span><span class="p">()</span>
-
-    <span class="c1"># 儲存每個工作表名稱的列表</span>
     <span class="n">sheet_names</span> <span class="o">=</span> <span class="p">[]</span>
-    
-    <span class="c1"># 儲存科目的列表（保留順序，並排除重複）</span>
     <span class="n">subjects</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pdf_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">pdf_paths</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;處理中&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;檔&quot;</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># 開啟 PDF 文件</span>
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">fitz</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">pdf_path</span><span class="p">)</span>
+    <span class="n">use_tqdm</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># 判斷是否有 console</span>
 
-            <span class="c1"># 在工作簿中為每個 PDF 檔案建立新工作表</span>
+    <span class="c1"># 更新進度條最大值</span>
+    <span class="n">progress_bar</span><span class="p">[</span><span class="s2">&quot;maximum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdf_paths</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pdf_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pdf_paths</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">fitz</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">pdf_path</span><span class="p">)</span>
             <span class="n">sheet_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;a</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">ws</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">create_sheet</span><span class="p">(</span><span class="n">sheet_name</span><span class="p">)</span>
-
             <span class="n">row_num</span> <span class="o">=</span> <span class="mi">1</span>
 
             <span class="k">for</span> <span class="n">page_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="p">)):</span>
@@ -4143,108 +4144,119 @@ is now available!
 
             <span class="n">doc</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-            <span class="c1"># ===============================</span>
-            <span class="c1"># 接著讀取該 Excel，進行合併數字到不同欄</span>
-            <span class="c1"># ===============================</span>
             <span class="n">temp_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="n">col_num</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 開始於第一欄</span>
-            <span class="n">row_num</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 開始於第一行</span>
+            <span class="n">col_num</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">row_num</span> <span class="o">=</span> <span class="mi">1</span>
 
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ws</span><span class="o">.</span><span class="n">iter_rows</span><span class="p">(</span><span class="n">min_row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_col</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
                 <span class="n">cell_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">is_number_like</span><span class="p">(</span><span class="n">cell_value</span><span class="p">):</span>
                     <span class="n">ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">row_num</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">col_num</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">cell_value</span><span class="p">)</span>
-                    <span class="n">col_num</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># 當發現數字時，移到下一個欄位</span>
+                    <span class="n">col_num</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">temp_text</span><span class="p">:</span>  <span class="c1"># 儲存上一段文字</span>
+                    <span class="k">if</span> <span class="n">temp_text</span><span class="p">:</span>
                         <span class="n">ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">row_num</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">temp_text</span><span class="p">)</span>
                         <span class="n">row_num</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="n">temp_text</span> <span class="o">=</span> <span class="n">cell_value</span>  <span class="c1"># 文字保持在第一欄</span>
-                    <span class="n">col_num</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># 下一個數字放在第二欄開始</span>
+                    <span class="n">temp_text</span> <span class="o">=</span> <span class="n">cell_value</span>
+                    <span class="n">col_num</span> <span class="o">=</span> <span class="mi">2</span>
 
-            <span class="k">if</span> <span class="n">temp_text</span><span class="p">:</span>  <span class="c1"># 將最後一個文本寫入</span>
+            <span class="k">if</span> <span class="n">temp_text</span><span class="p">:</span>
                 <span class="n">ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">row_num</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">temp_text</span><span class="p">)</span>
 
-            <span class="c1"># 刪除包含「平均」文字的行及其後所有行（不包含平均行）</span>
             <span class="n">remove_average_row</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
 
-            <span class="c1"># 設定工作表名稱為 A11 欄位的內容</span>
             <span class="k">if</span> <span class="n">ws</span><span class="p">[</span><span class="s1">&#39;A11&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
                 <span class="n">new_sheet_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ws</span><span class="p">[</span><span class="s1">&#39;A11&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">new_sheet_name</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_sheet_name</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">31</span><span class="p">:</span>  <span class="c1"># Excel 的工作表名稱最大長度為 31</span>
+                <span class="k">if</span> <span class="n">new_sheet_name</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_sheet_name</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">31</span><span class="p">:</span>
                     <span class="n">ws</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">new_sheet_name</span>
-                
-                <span class="c1"># 記錄工作表名稱</span>
                 <span class="n">sheet_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ws</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
 
-            <span class="c1"># 抓取科目，從 A12 開始的第一欄</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">ws</span><span class="o">.</span><span class="n">iter_rows</span><span class="p">(</span><span class="n">min_row</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">max_col</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
                 <span class="n">cell_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">cell_value</span> <span class="ow">and</span> <span class="n">cell_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">subjects</span><span class="p">:</span>
-                    <span class="n">subjects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_value</span><span class="p">)</span>  <span class="c1"># 直接加入科目列表，排除重複</span>
+                    <span class="n">subjects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_value</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⚠️ 錯誤：無法處理檔案 </span><span class="si">{</span><span class="n">pdf_path</span><span class="si">}</span><span class="s2">，原因：</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="c1"># 刪除預設的工作表（如果有的話）</span>
+        <span class="c1"># 更新進度條並顯示進度</span>
+        <span class="n">progress_bar</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="n">progress_label</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;進度: </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pdf_paths</span><span class="p">)</span><span class="si">}</span><span class="s2"> 檔案處理中...&quot;</span><span class="p">)</span>
+        <span class="n">root</span><span class="o">.</span><span class="n">update_idletasks</span><span class="p">()</span>
+
     <span class="k">if</span> <span class="s2">&quot;Sheet&quot;</span> <span class="ow">in</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span><span class="p">:</span>
         <span class="k">del</span> <span class="n">wb</span><span class="p">[</span><span class="s2">&quot;Sheet&quot;</span><span class="p">]</span>
 
-    <span class="c1"># 在最前面新增一個工作表，列出每個工作表的名稱</span>
-    <span class="n">ws_summary</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">create_sheet</span><span class="p">(</span><span class="s2">&quot;Summary&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># 在最前面插入工作表</span>
-    
-    <span class="c1"># 在 `Summary` 工作表的第一列，列出每個工作表的名稱</span>
+    <span class="n">ws_summary</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">create_sheet</span><span class="p">(</span><span class="s2">&quot;Summary&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="n">ws_summary</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">)</span>
 
-    <span class="c1"># 在 `Summary` 工作表的第一行，從 B1 開始，列出所有科目（按照遇到的順序，且排除重複）</span>
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">subject</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subjects</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>  <span class="c1"># 從 B1 開始</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">subject</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subjects</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="n">ws_summary</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">subject</span><span class="p">)</span>
 
-    <span class="c1"># 在 `Summary` 工作表的最後兩個欄位寫入「總分」和「平均」的標題</span>
     <span class="n">ws_summary</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;總分&quot;</span><span class="p">)</span>
     <span class="n">ws_summary</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;平均&quot;</span><span class="p">)</span>
 
-    <span class="c1"># 在 `Summary` 工作表中為每個學生填入科目分數</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="n">student_ws</span> <span class="o">=</span> <span class="n">wb</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span>
+        <span class="n">total_score</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">total_weight</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">total_score</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 總分</span>
-        <span class="n">total_weight</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 總權重</span>
-
-        <span class="c1"># 從 A12 開始抓取科目分數和權重</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">subject</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subjects</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>  <span class="c1"># 從 B1 開始放科目名稱</span>
-            <span class="c1"># 找到對應科目名稱的列，然後抓取分數和權重</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">subject</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subjects</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
             <span class="n">subject_row</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">student_ws</span><span class="o">.</span><span class="n">iter_rows</span><span class="p">(</span><span class="n">min_row</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">max_col</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">subject</span><span class="p">:</span>
                     <span class="n">subject_row</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">row</span>
                     <span class="k">break</span>
-            
-            <span class="c1"># 如果找到了對應科目，則計算分數與權重</span>
+
             <span class="k">if</span> <span class="n">subject_row</span><span class="p">:</span>
-                <span class="n">score</span> <span class="o">=</span> <span class="n">student_ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">subject_row</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># 假設分數在第二欄</span>
-                <span class="n">weight</span> <span class="o">=</span> <span class="n">student_ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">subject_row</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># 假設權重在第三欄</span>
+                <span class="n">score</span> <span class="o">=</span> <span class="n">student_ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">subject_row</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">weight</span> <span class="o">=</span> <span class="n">student_ws</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">subject_row</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
                 <span class="k">if</span> <span class="n">score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">is_number_like</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">))</span> <span class="ow">and</span> <span class="n">is_number_like</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">weight</span><span class="p">)):</span>
                     <span class="n">score</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
                     <span class="n">weight</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
-                    <span class="n">total_score</span> <span class="o">+=</span> <span class="n">score</span> <span class="o">*</span> <span class="n">weight</span>  <span class="c1"># 分數乘以權重並加總</span>
-                    <span class="n">total_weight</span> <span class="o">+=</span> <span class="n">weight</span>  <span class="c1"># 加總權重</span>
-
-                    <span class="c1"># 填寫 Summary 工作表中的分數</span>
+                    <span class="n">total_score</span> <span class="o">+=</span> <span class="n">score</span> <span class="o">*</span> <span class="n">weight</span>
+                    <span class="n">total_weight</span> <span class="o">+=</span> <span class="n">weight</span>
                     <span class="n">ws_summary</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">score</span><span class="p">)</span>
 
-        <span class="c1"># 計算總分和平均，並寫入 Summary 工作表</span>
         <span class="k">if</span> <span class="n">total_weight</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">average_score</span> <span class="o">=</span> <span class="n">total_score</span> <span class="o">/</span> <span class="n">total_weight</span>  <span class="c1"># 平均分數 = 總分 / 總權重</span>
-            <span class="n">ws_summary</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">total_score</span><span class="p">)</span>  <span class="c1"># 寫入總分</span>
-            <span class="n">ws_summary</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">average_score</span><span class="p">)</span>  <span class="c1"># 寫入平均分數</span>
+            <span class="n">average_score</span> <span class="o">=</span> <span class="n">total_score</span> <span class="o">/</span> <span class="n">total_weight</span>
+            <span class="n">ws_summary</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">total_score</span><span class="p">)</span>
+            <span class="n">ws_summary</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">subjects</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">average_score</span><span class="p">)</span>
 
-    <span class="c1"># 儲存所有結果到單一 Excel 檔案</span>
     <span class="n">final_excel_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;滾球隊成績_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.xlsx&quot;</span><span class="p">)</span>
     <span class="n">wb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">final_excel_path</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ 所有 PDF 已轉成 Excel 並整理完畢，儲存於：</span><span class="si">{</span><span class="n">output_folder</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ 所有 PDF 已轉成 Excel 並整理完畢，儲存於：</span><span class="si">{</span><span class="n">final_excel_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 轉檔完成後重新啟用按鈕</span>
+    <span class="n">start_button</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s2">&quot;raised&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;開始轉換&quot;</span><span class="p">)</span>
+    <span class="n">progress_label</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;轉檔完成！&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_gui</span><span class="p">():</span>
+    <span class="c1"># 設置 Tkinter 視窗</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">Tk</span><span class="p">()</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;PDF 轉 Excel 工具&quot;</span><span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;400x200&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 設置按鈕來啟動轉換</span>
+    <span class="n">start_button</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;開始轉換&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">start_conversion</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">start_button</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">,</span> <span class="n">progress_label</span><span class="p">),</span> <span class="n">height</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">start_button</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+    <span class="c1"># 設置進度條</span>
+    <span class="n">progress_bar</span> <span class="o">=</span> <span class="n">ttk</span><span class="o">.</span><span class="n">Progressbar</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;determinate&quot;</span><span class="p">)</span>
+    <span class="n">progress_bar</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="c1"># 顯示進度的標籤</span>
+    <span class="n">progress_label</span> <span class="o">=</span> <span class="n">ttk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;進度: 0/0 檔案處理中...&quot;</span><span class="p">)</span>
+    <span class="n">progress_label</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+    <span class="c1"># 開始 Tkinter 介面的循環，直到視窗關閉</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">create_gui</span><span class="p">()</span>
 </code></pre></div>
 <style>
 .md-tabs {
