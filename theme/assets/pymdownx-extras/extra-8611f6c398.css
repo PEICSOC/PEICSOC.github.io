@@ -2258,7 +2258,7 @@ body {
 
 /* 被點擊後變白 */
 .md-typeset [id]:target .headerlink {
-    background-color: white;
+    background-color: #F2BBFF;
 }
 
 
