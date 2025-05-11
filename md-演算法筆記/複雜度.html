@@ -1442,6 +1442,18 @@ is now available!
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    複雜度
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="%E8%A4%87%E9%9B%9C%E5%BA%A6.html" class="md-nav__link md-nav__link--active">
         
   
@@ -1452,6 +1464,52 @@ is now available!
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#總結" class="md-nav__link">
+    <span class="md-ellipsis">
+      總結
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ionc" class="md-nav__link">
+    <span class="md-ellipsis">
+      IONC
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ap325" class="md-nav__link">
+    <span class="md-ellipsis">
+      AP325
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -4128,6 +4186,41 @@ is now available!
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#總結" class="md-nav__link">
+    <span class="md-ellipsis">
+      總結
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ionc" class="md-nav__link">
+    <span class="md-ellipsis">
+      IONC
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ap325" class="md-nav__link">
+    <span class="md-ellipsis">
+      AP325
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -4144,6 +4237,12 @@ is now available!
 
 
 <h1 id="複雜度">複雜度<a class="headerlink" href="#複雜度" title="Permanent link"></a></h1>
+<h2 id="總結">總結<a class="headerlink" href="#總結" title="Permanent link"></a></h2>
+<p>自己寫一個小程式<br />
+令 <span class="arithmatex">\(O(f(n))\)</span> 是時間複雜度<br />
+算算看 <code>n ="範圍"</code> 帶入 <span class="arithmatex">\(f(n)\)</span> 是否會超過 7 位數 (7 位數是可接受的)<br />
+也就是 <span class="arithmatex">\(f(n)&lt;1*10^8=1e8\)</span></p>
+<h2 id="ionc">IONC<a class="headerlink" href="#ionc" title="Permanent link"></a></h2>
 <p>每秒 <span class="arithmatex">\(10^7\)</span></p>
 <table>
 <thead>
@@ -4176,6 +4275,101 @@ is now available!
 <tr>
 <td><span class="arithmatex">\(O(n \log n)\)</span></td>
 <td><span class="arithmatex">\(n \leq 10^6\)</span>（有時候 <span class="arithmatex">\(n = 10^7\)</span> 也不會 TLE）</td>
+</tr>
+</tbody>
+</table>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:6"><input checked="checked" id="ionc-on" name="__tabbed_1" type="radio" /><input id="ionc-o2n" name="__tabbed_1" type="radio" /><input id="ionc-on4" name="__tabbed_1" type="radio" /><input id="ionc-on3" name="__tabbed_1" type="radio" /><input id="ionc-on2" name="__tabbed_1" type="radio" /><input id="ionc-on-log-n" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="ionc-on"><span class="arithmatex">\(O(n!)\)</span></label><label for="ionc-o2n"><span class="arithmatex">\(O(2^n)\)</span></label><label for="ionc-on4"><span class="arithmatex">\(O(n^4)\)</span></label><label for="ionc-on3"><span class="arithmatex">\(O(n^3)\)</span></label><label for="ionc-on2"><span class="arithmatex">\(O(n^2)\)</span></label><label for="ionc-on-log-n"><span class="arithmatex">\(O(n \log n)\)</span></label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><span class="arithmatex">\(n \leq 10\)</span></p>
+<div class="highlight"><pre><span></span><code>9 : 362880
+10 : 3628800
+11 : 39916800
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><span class="arithmatex">\(n \leq 20\)</span></p>
+<div class="highlight"><pre><span></span><code>19 : 524288
+...
+22 : 4194304
+23 : 8388608
+24 : 16777216
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><span class="arithmatex">\(n \leq 50\)</span></p>
+<div class="highlight"><pre><span></span><code>45 : 4100625
+...
+55 : 9150625
+56 : 9834496
+57 : 10556001
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><span class="arithmatex">\(n \leq 200\)</span></p>
+<div class="highlight"><pre><span></span><code>190 : 6859000
+...
+214 : 9800344
+215 : 9938375
+216 : 10077696
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><span class="arithmatex">\(n \leq 3000\)</span></p>
+<div class="highlight"><pre><span></span><code>3000 : 9000000
+...
+3161 : 9991921
+3162 : 9998244
+3163 : 10004569
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><span class="arithmatex">\(n \leq 10^6\)</span>（有時候 <span class="arithmatex">\(n = 10^7\)</span> 也不會 TLE）</p>
+<div class="highlight"><pre><span></span><code>739949 : 9.99992e+006
+739950 : 9.99993e+006
+739951 : 9.99995e+006
+739952 : 9.99996e+006
+739953 : 9.99998e+006
+739954 : 9.99999e+006
+739955 : 1e+007
+739956 : 1e+007
+</code></pre></div>
+<p>e+007= *<span class="arithmatex">\(10^7\)</span></p>
+</div>
+</div>
+</div>
+<h2 id="ap325">AP325<a class="headerlink" href="#ap325" title="Permanent link"></a></h2>
+<table>
+<thead>
+<tr>
+<th>Big-O 複雜度</th>
+<th>競賽適用範圍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(O(n!)\)</span></td>
+<td>10</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(O(2^n)\)</span></td>
+<td>20~25</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(O(n^4)\)</span></td>
+<td>無</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(O(n^3)\)</span></td>
+<td>數百</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(O(n^2)\)</span></td>
+<td>數千</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(O(n)\)</span> or <span class="arithmatex">\(O(n \log n)\)</span></td>
+<td>超過1萬</td>
 </tr>
 </tbody>
 </table>
