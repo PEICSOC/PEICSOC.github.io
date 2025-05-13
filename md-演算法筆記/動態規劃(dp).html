@@ -2864,50 +2864,23 @@ is now available!
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#統整" class="md-nav__link">
+  <a href="#技巧" class="md-nav__link">
     <span class="md-ellipsis">
-      統整
+      技巧
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#背包問題" class="md-nav__link">
+  <a href="#統整" class="md-nav__link">
     <span class="md-ellipsis">
-      背包問題：
+      統整
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="背包問題：">
+    <nav class="md-nav" aria-label="統整">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#口訣" class="md-nav__link">
-    <span class="md-ellipsis">
-      口訣
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#用途" class="md-nav__link">
-    <span class="md-ellipsis">
-      用途：
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#四大步驟" class="md-nav__link">
-    <span class="md-ellipsis">
-      四大步驟：
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#top-down-memoization" class="md-nav__link">
@@ -4475,50 +4448,23 @@ is now available!
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#統整" class="md-nav__link">
+  <a href="#技巧" class="md-nav__link">
     <span class="md-ellipsis">
-      統整
+      技巧
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#背包問題" class="md-nav__link">
+  <a href="#統整" class="md-nav__link">
     <span class="md-ellipsis">
-      背包問題：
+      統整
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="背包問題：">
+    <nav class="md-nav" aria-label="統整">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#口訣" class="md-nav__link">
-    <span class="md-ellipsis">
-      口訣
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#用途" class="md-nav__link">
-    <span class="md-ellipsis">
-      用途：
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#四大步驟" class="md-nav__link">
-    <span class="md-ellipsis">
-      四大步驟：
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#top-down-memoization" class="md-nav__link">
@@ -4801,6 +4747,10 @@ is now available!
 
 
 <h1 id="動態規劃dp">動態規劃(dp)<a class="headerlink" href="#動態規劃dp" title="Permanent link"></a></h1>
+<h2 id="技巧">技巧<a class="headerlink" href="#技巧" title="Permanent link"></a></h2>
+<p>1.要先定義「狀態」而且要精準、謹慎的定義，如：在甚麼情況下的&hellip;，當選或是不選&hellip;<br />
+2.決定如何「轉移」(寫遞迴式)</p>
+<p>通常的解決原則就是把子問題加條件，或是將子問題依照不同的條件再進一步分類。</p>
 <h2 id="統整"><strong>統整</strong><a class="headerlink" href="#統整" title="Permanent link"></a></h2>
 <blockquote>
 <ol>
@@ -4833,76 +4783,96 @@ is now available!
 <a href="#i-仁者無敵-13">I. 仁者無敵 1.3</a>     </li>
 </ol>
 </blockquote>
-<h2 id="背包問題">背包問題：<a class="headerlink" href="#背包問題" title="Permanent link"></a></h2>
-<p>一、組成要素：</p>
-<ol>
-<li>總重量(dp[i])</li>
-<li>物品重量(dp[i-w[j]]的w)，放在index</li>
-<li>物品價值(v[i])，放在</li>
-</ol>
-<p>二、核心概念：</p>
-<blockquote>
-<ol>
-<li>誰在外圈，誰在內圈？ <br />
-計算排列（P）(不同順序有差，也就是有先後順序)時，物品在內圈 <br />
-計算組合（C）(不同順序沒關係，沒先後順序)時，物品在外圈   </li>
-<li>順序，倒序？ <br />
-每個物品只能選擇多次時，順序 <br />
-每個物品只能選擇一次時，倒序   </li>
-</ol>
-</blockquote>
-<h3 id="口訣">口訣<a class="headerlink" href="#口訣" title="Permanent link"></a></h3>
-<blockquote>
-<p>多順外組(多孝順外祖母)</p>
-</blockquote>
-<hr />
-<p><img alt="alt text" src="../images/%E5%8B%95%E6%85%8B%E8%A6%8F%E5%8A%83%28dp%29/image-33.png" /></p>
-<blockquote>
-<p>(A)例題：     <br />
-<a href="#p-6-9-大賣場免費大搬家">a343: P-6-9. 大賣場免費大搬家</a>       </p>
-<p>(B)例題：       </p>
-<p>(C)例題：     <br />
-<a href="#d133-00357---let-me-count-the-ways">d133. 00357 - Let Me Count The Ways</a>       </p>
-<p>(D)例題：     <br />
-<a href="#d212-東東爬階梯">d212. 東東爬階梯</a>     <br />
-<a href="#p-6-1-小朋友上樓梯最小成本">P-6-1. 小朋友上樓梯最小成本</a>       </p>
-</blockquote>
-<hr />
-<h3 id="用途">用途：<a class="headerlink" href="#用途" title="Permanent link"></a></h3>
-<blockquote>
-<p>1.計數  <br />
-有多少種方式走到右下角  <br />
-有多少種方法選出個數使得和是Sum    </p>
-<p>2.求最大最小值  <br />
-從左上角走到右下角路徑的最大數字和  <br />
-最長上升子序列長度    </p>
-<p>3.求存在性  <br />
-取石子遊戲，先手是否必勝  <br />
-能不能選出k個數使得和是Sum    </p>
-</blockquote>
-<h3 id="四大步驟">四大步驟：<a class="headerlink" href="#四大步驟" title="Permanent link"></a></h3>
-<blockquote>
-<p>1.確定狀態   <br />
-狀態：定義<code>f[i]</code>的「意義」，像是<code>f[i]</code>為第<code>i</code>個位置的最小值     </p>
-<p>2.狀態轉移   <br />
-狀態轉移需要兩個意識：   </p>
-<ul>
-<li>子問題     </li>
-<li>最後一步     </li>
-</ul>
-<p>要思考：在選最後一個時，前面會選到的所有位置有哪些?   <br />
-再根據條件寫轉移式     </p>
-<p>看到下題，將所有情況分開討論   <br />
-一維：<a href="#p-6-3-最小監控鄰居的成本">P-6-3-最小監控鄰居的成本</a>   <br />
-多維：<a href="#b589-超級馬拉松賽">b589-超級馬拉松賽</a>     </p>
-<p>3.邊界   <br />
-定義<code>f[0]</code>的數值或是「無法透過轉移式計算」之數值   <br />
-看到下題，使用向外拓展、函數兩方法   <br />
-<a href="#d378-最小路徑">d378-最小路徑</a>     </p>
-<p>4.確定計算順序   <br />
-調整轉移式以確保子問題會於主問題之前解決   <br />
-可以選擇Top-Down或是Bottom-Up或其他     </p>
-</blockquote>
+<!-- 
+## 背包問題：
+
+一、組成要素：
+
+1. 總重量(dp[i])
+2. 物品重量(dp[i-w[j]]的w)，放在index
+4. 物品價值(v[i])，放在
+
+二、核心概念：
+
+>1. 誰在外圈，誰在內圈？   
+>計算排列（P）(不同順序有差，也就是有先後順序)時，物品在內圈   
+>計算組合（C）(不同順序沒關係，沒先後順序)時，物品在外圈   
+>2. 順序，倒序？   
+>每個物品只能選擇多次時，順序   
+>每個物品只能選擇一次時，倒序   
+
+### 口訣
+
+> 多順外組(多孝順外祖母)
+
+---
+![alt text](../images/動態規劃(dp)/image-33.png)
+
+
+>(A)例題：       
+>[a343: P-6-9. 大賣場免費大搬家](#p-6-9-大賣場免費大搬家)       
+
+>(B)例題：       
+
+>(C\)例題：       
+>[d133. 00357 - Let Me Count The Ways](#d133-00357---let-me-count-the-ways)       
+
+>(D)例題：       
+>[d212. 東東爬階梯](#d212-東東爬階梯)       
+>[P-6-1. 小朋友上樓梯最小成本](#p-6-1-小朋友上樓梯最小成本)       
+
+
+----   
+
+
+
+
+
+
+### 用途：    
+
+> 1.計數    
+> 有多少種方式走到右下角    
+> 有多少種方法選出個數使得和是Sum    
+
+> 2.求最大最小值    
+> 從左上角走到右下角路徑的最大數字和    
+> 最長上升子序列長度    
+
+> 3.求存在性    
+> 取石子遊戲，先手是否必勝    
+> 能不能選出k個數使得和是Sum    
+
+### 四大步驟：    
+
+>1.確定狀態     
+>狀態：定義`f[i]`的「意義」，像是`f[i]`為第`i`個位置的最小值     
+
+>2.狀態轉移     
+>狀態轉移需要兩個意識：   
+>     
+>- 子問題     
+>- 最後一步     
+>     
+>要思考：在選最後一個時，前面會選到的所有位置有哪些?     
+>再根據條件寫轉移式     
+>     
+>看到下題，將所有情況分開討論     
+>一維：[P-6-3-最小監控鄰居的成本](#p-6-3-最小監控鄰居的成本)     
+>多維：[b589-超級馬拉松賽](#b589-超級馬拉松賽)     
+
+>3.邊界     
+>定義`f[0]`的數值或是「無法透過轉移式計算」之數值     
+>看到下題，使用向外拓展、函數兩方法     
+>[d378-最小路徑](#d378-最小路徑)     
+
+>4.確定計算順序     
+>調整轉移式以確保子問題會於主問題之前解決     
+>可以選擇Top-Down或是Bottom-Up或其他     
+
+
+      -->
+
 <h3 id="top-down-memoization">Top-down memoization<a class="headerlink" href="#top-down-memoization" title="Permanent link"></a></h3>
 <blockquote>
 <p>這是一種dp方式      <br />
