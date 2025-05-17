@@ -4429,45 +4429,72 @@ is now available!
 N = 9, L = 4<br />
 序列 (seq): 1 4 3 6 9 8 5 7 1<br />
 我們一步步追蹤您的程式碼（為了簡化，我們假設迴圈是 for(int i=0; i<n; ++i)，並且 cin>&gt;x 讀取的是序列中的第 i 個元素，m 對應 L）：<br />
-您的 deque 維護邏輯 (以 mindq 為例):<br />
+\</p>
+<p>您的 deque 維護邏輯 (以 mindq 為例):<br />
 * mindq.push_back(x);<br />
 * while(!mindq.empty() &amp;&amp; (mindq.front() &gt; x || mindq.size() &gt; m)) { mindq.pop_front(); }<br />
 追蹤：<br />
-(ans 初始為 0)<br />
-* i=0, x=1:<br />
-* mindq.push_back(1) -&gt; mindq = [1]<br />
-* while 條件: front(1)&gt;x(1) (F), size(1)&gt;L(4) (F). mindq 不變: [1]<br />
-* maxdq (類似): [1]<br />
-* ans = max(0, 1-1) = 0<br />
-* i=1, x=4:<br />
-* mindq.push_back(4) -&gt; mindq = [1, 4]<br />
-* while 條件: front(1)&gt;x(4) (F), size(2)&gt;L(4) (F). mindq 不變: [1, 4]<br />
-* maxdq.push_back(4) -&gt; [1,4]. while(front(1)<x(4) (T)) -> pop_front(). maxdq = [4]<br />
-* ans = max(0, maxdq.front(4) - mindq.front(1)) = 3<br />
-* i=2, x=3:<br />
-* mindq.push_back(3) -&gt; mindq = [1, 4, 3]<br />
-* while 條件: front(1)&gt;x(3) (F), size(3)&gt;L(4) (F). mindq 不變: [1, 4, 3]<br />
-* maxdq.push_back(3) -&gt; [4,3]. while(front(4)<x(3) (F), size(2)>L(4) (F)). maxdq=[4,3]<br />
-* ans = max(3, maxdq.front(4) - mindq.front(1)) = 3<br />
-* i=3, x=6: (當前窗口 [1, 4, 3, 6]. 實際 Min=1, Max=6. Diff=5)<br />
-* mindq.push_back(6) -&gt; mindq = [1, 4, 3, 6]<br />
-* while 條件: front(1)&gt;x(6) (F), size(4)&gt;L(4) (F, size==L). mindq 不變: [1, 4, 3, 6]<br />
-    * 此時 mindq.front() 是 1 (正確)<br />
-* maxdq.push_back(6) -&gt; [4,3,6]. while(front(4)<x(6) (T)) -> pop. maxdq=[3,6]. while(front(3)<x(6) (T)) -> pop. maxdq=[6]<br />
-    * 此時 maxdq.front() 是 6 (正確)<br />
-* ans = max(3, 6-1) = 5. (此窗口計算正確)<br />
-* i=4, x=9: (當前窗口 [4, 3, 6, 9]. 實際 Min=3, Max=9. Diff=6)<br />
-* mindq.push_back(9) -&gt; mindq = [1, 4, 3, 6, 9]<br />
-* while 條件 (x=9, L=4):<br />
-    * mindq = [1, 4, 3, 6, 9]. front(1)&gt;x(9) (F). size(5)&gt;L(4) (T). mindq.pop_front(). mindq 變為 [4, 3, 6, 9].<br />
-    * mindq = [4, 3, 6, 9]. front(4)&gt;x(9) (F). size(4)&gt;L(4) (F, size==L). while 結束.<br />
-* 錯誤點：此時 mindq 是 [4, 3, 6, 9]. 您的程式碼會認為 mindq.front() 即 4 是當前窗口 [4, 3, 6, 9] 的最小值。但實際的最小值是 3。<br />
-* maxdq.push_back(9) -&gt; [6,9]. while(front(6)<x(9) (T)) -> pop. maxdq=[9].<br />
-    * 此時 maxdq.front() 是 9 (正確)<br />
-* 您的程式碼計算差值: maxdq.front(9) - mindq.front(4) = 5.<br />
-* ans = max(5, 5) = 5.<br />
-* 問題影響： 這個窗口 [4, 3, 6, 9] 的正確差值是 9 - 3 = 6。但因為您的 mindq 維護邏輯使得 mindq.front() 變成了 4，所以計算出的差值是 5。如果 6 是全局最大的差值，您的程式碼就會錯過它。<br />
-為什麼 mindq.front() 會出錯？<br />
+(ans 初始為 0)</p>
+<ul>
+<li>i=0, x=1:</li>
+<li>mindq.push_back(1) -&gt; mindq = [1]</li>
+<li>while 條件: front(1)&gt;x(1) (F), size(1)&gt;L(4) (F). mindq 不變: [1]</li>
+<li>maxdq (類似): [1]</li>
+<li>
+<p>ans = max(0, 1-1) = 0</p>
+</li>
+<li>
+<p>i=1, x=4:</p>
+</li>
+<li>mindq.push_back(4) -&gt; mindq = [1, 4]</li>
+<li>while 條件: front(1)&gt;x(4) (F), size(2)&gt;L(4) (F). mindq 不變: [1, 4]</li>
+<li>maxdq.push_back(4) -&gt; [1,4]. while(front(1)<x(4) (T)) -> pop_front(). maxdq = [4]</li>
+<li>
+<p>ans = max(0, maxdq.front(4) - mindq.front(1)) = 3</p>
+</li>
+<li>
+<p>i=2, x=3:</p>
+</li>
+<li>mindq.push_back(3) -&gt; mindq = [1, 4, 3]</li>
+<li>while 條件: front(1)&gt;x(3) (F), size(3)&gt;L(4) (F). mindq 不變: [1, 4, 3]</li>
+<li>maxdq.push_back(3) -&gt; [4,3]. while(front(4)<x(3) (F), size(2)>L(4) (F)). maxdq=[4,3]</li>
+<li>
+<p>ans = max(3, maxdq.front(4) - mindq.front(1)) = 3</p>
+</li>
+<li>
+<p>i=3, x=6: (當前窗口 [1, 4, 3, 6]. 實際 Min=1, Max=6. Diff=5)</p>
+</li>
+<li>mindq.push_back(6) -&gt; mindq = [1, 4, 3, 6]</li>
+<li>while 條件: front(1)&gt;x(6) (F), size(4)&gt;L(4) (F, size==L). mindq 不變: [1, 4, 3, 6]<ul>
+<li>此時 mindq.front() 是 1 (正確)</li>
+</ul>
+</li>
+<li>maxdq.push_back(6) -&gt; [4,3,6]. while(front(4)<x(6) (T)) -> pop. maxdq=[3,6]. while(front(3)<x(6) (T)) -> pop. maxdq=[6]<ul>
+<li>此時 maxdq.front() 是 6 (正確)</li>
+</ul>
+</li>
+<li>
+<p>ans = max(3, 6-1) = 5. (此窗口計算正確)</p>
+</li>
+<li>
+<p>i=4, x=9: (當前窗口 [4, 3, 6, 9]. 實際 Min=3, Max=9. Diff=6)</p>
+</li>
+<li>mindq.push_back(9) -&gt; mindq = [1, 4, 3, 6, 9]</li>
+<li>while 條件 (x=9, L=4):<ul>
+<li>mindq = [1, 4, 3, 6, 9]. front(1)&gt;x(9) (F). size(5)&gt;L(4) (T). mindq.pop_front(). mindq 變為 [4, 3, 6, 9].</li>
+<li>mindq = [4, 3, 6, 9]. front(4)&gt;x(9) (F). size(4)&gt;L(4) (F, size==L). while 結束.</li>
+</ul>
+</li>
+<li>錯誤點：此時 mindq 是 [4, 3, 6, 9]. 您的程式碼會認為 mindq.front() 即 4 是當前窗口 [4, 3, 6, 9] 的最小值。但實際的最小值是 3。</li>
+<li>maxdq.push_back(9) -&gt; [6,9]. while(front(6)<x(9) (T)) -> pop. maxdq=[9].<ul>
+<li>此時 maxdq.front() 是 9 (正確)</li>
+</ul>
+</li>
+<li>您的程式碼計算差值: maxdq.front(9) - mindq.front(4) = 5.</li>
+<li>ans = max(5, 5) = 5.</li>
+<li>問題影響： 這個窗口 [4, 3, 6, 9] 的正確差值是 9 - 3 = 6。但因為您的 mindq 維護邏輯使得 mindq.front() 變成了 4，所以計算出的差值是 5。如果 6 是全局最大的差值，您的程式碼就會錯過它。</li>
+</ul>
+<p>為什麼 mindq.front() 會出錯？<br />
 在處理 x=9 時：<br />
 * 舊的 mindq 是 [1, 4, 3, 6]。元素 1 來自序列的第一個元素，它實際上已經滑出了當前窗口 [4, 3, 6, 9]。<br />
 * mindq.push_back(9) 使 mindq 變成 [1, 4, 3, 6, 9]。<br />
