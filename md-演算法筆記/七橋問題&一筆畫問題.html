@@ -4352,6 +4352,8 @@ is now available!
 \text{筆畫數}= \min \left( \text{奇頂點}/2, 1 \right)
 \]</pre>
 <p>也就是說恰好有 0 或 2 個奇頂點時才能一筆畫連完</p>
+<p>如果所有點都有邊連線(沒出現孤島)，就不用考慮邊數不是2的倍數的情況，因為一個邊必定對上兩個點，也藉就是說多增加一個邊，就會增加兩個奇頂點</p>
+<p>當邊數為2k時，每一筆畫必須從一個奇頂點開始，到另一個奇頂點結束，完成k筆畫</p>
 </div>
 <h2 id="七橋問題">七橋問題<a class="headerlink" href="#七橋問題" title="Permanent link"></a></h2>
 <h3 id="故事">故事<a class="headerlink" href="#故事" title="Permanent link"></a></h3>

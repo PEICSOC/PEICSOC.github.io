@@ -4221,11 +4221,12 @@ v: 37 21
 </ol>
 <p>的用法</p>
 <h2 id="用法">*、&amp;用法<a class="headerlink" href="#用法" title="Permanent link"></a></h2>
-<p>分為「宣告模式」、「呼叫模式」(非正式名稱，本文亂教)如下表</p>
+<p>先定義 int x 中的 x 是一個物件</p>
+<p>*和&amp;分為「宣告模式」、「呼叫模式」(非正式名稱，本文亂教)如下表</p>
 <table>
 <thead>
 <tr>
-<th>物件</th>
+<th>運算子</th>
 <th>宣告模式</th>
 <th>呼叫模式</th>
 </tr>
@@ -4234,12 +4235,12 @@ v: 37 21
 <tr>
 <td>*</td>
 <td>製作存位置的變數。  【註一】</td>
-<td>回傳變數(該變數為位置)的值。  【註二】</td>
+<td>回傳變數(該變數為位置)的物件。  【註二】</td>
 </tr>
 <tr>
 <td>&amp;</td>
-<td>製作對於某變數的別名。   【註三】</td>
-<td>取得變數(該變數為值)的址(位置)。  【註四】</td>
+<td>製作對於某物件的別名。   【註三】</td>
+<td>取得變數(該變數為物件)的址(位置)。  【註四】</td>
 </tr>
 </tbody>
 </table>
@@ -4248,7 +4249,7 @@ v: 37 21
 <div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="用法-註四" name="__tabbed_1" type="radio" /><input id="用法-註一" name="__tabbed_1" type="radio" /><input id="用法-註二" name="__tabbed_1" type="radio" /><input id="用法-註三" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="用法-註四">【註四】</label><label for="用法-註一">【註一】</label><label for="用法-註二">【註二】</label><label for="用法-註三">【註三】</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><span class="arithmatex">\(「\&amp;」\)</span> 呼叫模式，取得變數(該變數為值)的址(位置)。</p>
+<p><span class="arithmatex">\(「\&amp;」\)</span> 呼叫模式，取得變數(該變數為物件)的址(位置)。</p>
 <ul>
 <li>格式：<br />
 &amp;{變數} </li>
@@ -4274,7 +4275,7 @@ v: 37 21
 </ul>
 </div>
 <div class="tabbed-block">
-<p><span class="arithmatex">\(「*」\)</span> 呼叫模式，回傳變數(該變數為位置)的值。</p>
+<p><span class="arithmatex">\(「*」\)</span> 呼叫模式，回傳變數(該變數為位置)的物件。</p>
 <ul>
 <li>格式：<br />
 *{變數} </li>
@@ -4286,7 +4287,7 @@ v: 37 21
 </ul>
 </div>
 <div class="tabbed-block">
-<p><span class="arithmatex">\(「\&amp;」\)</span> 宣告模式，製作對於某變數的別名。</p>
+<p><span class="arithmatex">\(「\&amp;」\)</span> 宣告模式，製作對於某物件的別名。</p>
 <ul>
 <li>格式：<br />
 &amp;{變數} </li>
