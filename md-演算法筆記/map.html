@@ -4207,6 +4207,9 @@ is now available!
 
 
 <h1 id="map">map<a class="headerlink" href="#map" title="Permanent link"></a></h1>
+<p>map 是儲存 pair<br />
+map 依照 pair 的 first 進行排序<br />
+所以 pair 的 first 要是可以排序的東西，像是 int 、 pair 、 tuple 、自己寫的 operator&lt; 結構</p>
 <h2 id="重點">重點<a class="headerlink" href="#重點" title="Permanent link"></a></h2>
 <p>1.只要執行 <code>mp[x]</code> 就會新增一個鑑為 x 的pair <br />
 2.要判斷是否有鑑值存在於 map 中要用 mp.find(x) <br />
@@ -4318,8 +4321,7 @@ is now available!
 </li>
 <li>
 <p><strong>尋找元素</strong><br />
-   <div class="highlight"><pre><span></span><code><span class="p">{</span><span class="o">%</span><span class="w"> </span><span class="n">raw</span><span class="w"> </span><span class="o">%</span><span class="p">}</span>
-<span class="w"> </span><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+   <div class="highlight"><pre><span></span><code><span class="w"> </span><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 <span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
 <span class="w">     </span><span class="n">map</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="n">mp</span><span class="o">=</span><span class="p">{{</span><span class="sc">&#39;c&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">},{</span><span class="sc">&#39;a&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">}};</span>
@@ -4327,7 +4329,6 @@ is now available!
 <span class="w">         </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;find&quot;</span><span class="p">;</span>
 <span class="w">     </span><span class="p">}</span>
 <span class="w"> </span><span class="p">}</span>
-<span class="w"> </span><span class="p">{</span><span class="o">%</span><span class="w"> </span><span class="n">endraw</span><span class="w"> </span><span class="o">%</span><span class="p">}</span>
 </code></pre></div></p>
 </li>
 <li>
