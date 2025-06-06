@@ -25,7 +25,7 @@
     
     
       
-        <title>圖論 - PEICSOC</title>
+        <title>圖論 - PEI_CSO_C100</title>
       
     
     
@@ -522,9 +522,9 @@ is now available!
   >
     <a
       href="https://PEICSOC.github.io/"
-      title="PEICSOC"
+      title="PEI_CSO_C100"
       class="md-header__button md-logo"
-      aria-label="PEICSOC"
+      aria-label="PEI_CSO_C100"
     >
       
   <img src="../logo/logo.png" alt="logo">
@@ -537,7 +537,7 @@ is now available!
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            PEICSOC
+            PEI_CSO_C100
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -782,12 +782,12 @@ is now available!
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="PEICSOC" class="md-nav__button md-logo" aria-label="PEICSOC" data-md-component="logo">
+    <a href=".." title="PEI_CSO_C100" class="md-nav__button md-logo" aria-label="PEI_CSO_C100" data-md-component="logo">
       
   <img src="../logo/logo.png" alt="logo">
 
     </a>
-    PEICSOC
+    PEI_CSO_C100
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -4174,6 +4174,8 @@ is now available!
       
         
       
+        
+      
     
     
       
@@ -4284,6 +4286,28 @@ is now available!
   
   <span class="md-ellipsis">
     測試
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../md-%E9%80%A3%E7%B5%90Google%E6%96%87%E4%BB%B6%E7%9A%84%E7%AF%84%E4%BE%8B/%E9%80%A3%E7%B5%90Google%E6%96%87%E4%BB%B6%E7%9A%84%E7%AF%84%E4%BE%8B.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    連結Google文件的範例
     
   </span>
   
@@ -4564,7 +4588,8 @@ is now available!
 <h3 id="bfs">BFS<a class="headerlink" href="#bfs" title="Permanent link"></a></h3>
 <p>注意事項！！最常出錯的地方 ：一定要記得宣告vis陣列   <br />
 1. q.push後面會加上一個vis=true (所以共兩個) <br />
-2. 判斷if(!vis[i]){ &hellip; }</p>
+2. 判斷if(!vis[i]){ &hellip; }<br />
+3. q是要取first</p>
 <p>最基本寫法</p>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">bfs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ff</span><span class="p">){</span>
 
@@ -4706,6 +4731,7 @@ is now available!
 <p>這題比較困難的部分是如何計算高度    </p>
 <p>我們可以知道「子節點的高度」為「父節點的高度」+1  <br />
 所以<code>dp[子]=dp[父]+1</code></p>
+<p>另外，這題不能用DFS，因為這是圖不是樹，最短距離要用BFS</p>
 </blockquote>
 <div class="collapse-code"><input checked="checked" id="__collapse1" name="__collapse1" type="checkbox" /><div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
