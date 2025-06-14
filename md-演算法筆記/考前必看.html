@@ -1315,6 +1315,24 @@ is now available!
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#return絕對不能忘記" class="md-nav__link">
+    <span class="md-ellipsis">
+      return絕對不能忘記
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memset" class="md-nav__link">
+    <span class="md-ellipsis">
+      memset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sort-的-cmp" class="md-nav__link">
     <span class="md-ellipsis">
       sort 的 cmp
@@ -1370,18 +1388,18 @@ is now available!
 </li>
         
           <li class="md-nav__item">
-  <a href="#atoistoito_string" class="md-nav__link">
+  <a href="#tuple--get" class="md-nav__link">
     <span class="md-ellipsis">
-      atoi、stoi、to_string
+      tuple 、 get
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#tuple--get" class="md-nav__link">
+  <a href="#atoistoito_string" class="md-nav__link">
     <span class="md-ellipsis">
-      tuple 、 get
+      atoi、stoi、to_string
     </span>
   </a>
   
@@ -4462,6 +4480,24 @@ is now available!
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#return絕對不能忘記" class="md-nav__link">
+    <span class="md-ellipsis">
+      return絕對不能忘記
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#memset" class="md-nav__link">
+    <span class="md-ellipsis">
+      memset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#sort-的-cmp" class="md-nav__link">
     <span class="md-ellipsis">
       sort 的 cmp
@@ -4517,18 +4553,18 @@ is now available!
 </li>
         
           <li class="md-nav__item">
-  <a href="#atoistoito_string" class="md-nav__link">
+  <a href="#tuple--get" class="md-nav__link">
     <span class="md-ellipsis">
-      atoi、stoi、to_string
+      tuple 、 get
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#tuple--get" class="md-nav__link">
+  <a href="#atoistoito_string" class="md-nav__link">
     <span class="md-ellipsis">
-      tuple 、 get
+      atoi、stoi、to_string
     </span>
   </a>
   
@@ -4761,6 +4797,38 @@ is now available!
 
 
 <h1 id="考前必看">考前必看<a class="headerlink" href="#考前必看" title="Permanent link"></a></h1>
+<h2 id="return絕對不能忘記">return絕對不能忘記<a class="headerlink" href="#return絕對不能忘記" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">){</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">){</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="memset">memset<a class="headerlink" href="#memset" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+
+<span class="cp">#define MEM(x,v) memset(x,v,sizeof(x));</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
+<span class="w">    </span><span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">[]</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">};</span>
+
+<span class="w">    </span><span class="n">MEM</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">:</span><span class="n">v</span><span class="p">){</span>
+<span class="w">        </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="s">&quot; &quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// 0 0 0 0 0</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
 <h2 id="sort-的-cmp">sort 的 cmp<a class="headerlink" href="#sort-的-cmp" title="Permanent link"></a></h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
@@ -4807,6 +4875,16 @@ is now available!
 <span class="w">    </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">a</span><span class="p">;</span><span class="w"> </span><span class="c1">//9</span>
 <span class="p">}</span>
 </code></pre></div>
+<h3 id="tuple--get">tuple 、 get<a class="headerlink" href="#tuple--get" title="Permanent link"></a></h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
+<span class="w">    </span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
+<span class="w">    </span><span class="n">t</span><span class="o">=</span><span class="p">{</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span>
+
+<span class="w">    </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="n">t</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
 <h3 id="atoistoito_string">atoi、stoi、to_string<a class="headerlink" href="#atoistoito_string" title="Permanent link"></a></h3>
 <div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
@@ -4842,16 +4920,6 @@ is now available!
 <span class="w">        </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">to_string</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
 <span class="w">        </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">toint</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
 <span class="w">        </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">toint</span><span class="p">(</span><span class="s">&quot;-1000&quot;</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre></div>
-<h3 id="tuple--get">tuple 、 get<a class="headerlink" href="#tuple--get" title="Permanent link"></a></h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
-<span class="w">    </span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="p">,</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
-<span class="w">    </span><span class="n">t</span><span class="o">=</span><span class="p">{</span><span class="mi">8</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span>
-
-<span class="w">    </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="n">t</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="systempause">system、pause<a class="headerlink" href="#systempause" title="Permanent link"></a></h3>
