@@ -3199,9 +3199,9 @@ is now available!
 </li>
       
         <li class="md-nav__item">
-  <a href="#c462-apcs-交錯字串-alternating-strings201710" class="md-nav__link">
+  <a href="#難-c462-apcs-交錯字串-alternating-strings201710" class="md-nav__link">
     <span class="md-ellipsis">
-      c462. apcs 交錯字串 (Alternating Strings)(2017/10)
+      難！ c462. apcs 交錯字串 (Alternating Strings)(2017/10)
     </span>
   </a>
   
@@ -4407,9 +4407,9 @@ is now available!
 </li>
       
         <li class="md-nav__item">
-  <a href="#c462-apcs-交錯字串-alternating-strings201710" class="md-nav__link">
+  <a href="#難-c462-apcs-交錯字串-alternating-strings201710" class="md-nav__link">
     <span class="md-ellipsis">
-      c462. apcs 交錯字串 (Alternating Strings)(2017/10)
+      難！ c462. apcs 交錯字串 (Alternating Strings)(2017/10)
     </span>
   </a>
   
@@ -4632,33 +4632,262 @@ is now available!
 <span class="w">            </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">&lt;&lt;</span><span class="s">&quot; &quot;</span><span class="p">;</span>
 <span class="w">        </span><span class="p">}</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">nn</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="c1">//---------------------------------------------------</span>
 <span class="p">}</span>
 </code></pre></div>
 <div class="code-footer"><label class="expand" for="__collapse0" tabindex="0" title="expand"></label><label class="collapse" for="__collapse0" tabindex="0" title="collapse"></label></div>
 </div>
 <h2 id="c295-apcs-2016-1029-2最大和201610"><a href="https://zerojudge.tw/ShowProblem?problemid=c295">c295. APCS-2016-1029-2最大和(2016/10)</a><a class="headerlink" href="#c295-apcs-2016-1029-2最大和201610" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse1" name="__collapse1" type="checkbox" /><div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="cp">#define int long long</span>
+<span class="cp">#define stop system(&quot;pause&quot;);</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="mi">30</span><span class="p">][</span><span class="mi">30</span><span class="p">];</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">f</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
+<span class="kt">signed</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
+<span class="w">    </span><span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="c1">//    istringstream cin(&quot;3 2 \</span>
+<span class="c1">1 5 \</span>
+<span class="c1">6 4 \</span>
+<span class="c1">1 1&quot;);</span>
+<span class="c1">//    istringstream cin(&quot;4 3 \</span>
+<span class="c1">6 3 2 \</span>
+<span class="c1">2 7 9 \</span>
+<span class="c1">4 7 1 \</span>
+<span class="c1">9 5 3&quot;);</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="n">m</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+<span class="w">            </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ans</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">isn</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">ma</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+<span class="w">            </span><span class="n">ma</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">ma</span><span class="p">,</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">ans</span><span class="o">+=</span><span class="n">ma</span><span class="p">;</span>
+<span class="w">        </span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">ma</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="c1">//    for(int i=0;i&lt;n;i++){</span>
+<span class="c1">//        cout&lt;&lt;f[i];</span>
+<span class="c1">//    }</span>
+<span class="w">    </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="o">&lt;&lt;</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">p</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">ans</span><span class="o">%</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">p</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span>
+<span class="w">                </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot; &quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">            </span><span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">            </span><span class="n">isn</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">isn</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+<span class="w">        </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse1" tabindex="0" title="expand"></label><label class="collapse" for="__collapse1" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="c291-apcs-2017-0304-2小群體20173"><a href="https://zerojudge.tw/ShowProblem?problemid=c291">c291. APCS 2017-0304-2小群體(2017/3)</a><a class="headerlink" href="#c291-apcs-2017-0304-2小群體20173" title="Permanent link"></a></h2>
-<h2 id="c462-apcs-交錯字串-alternating-strings201710"><a href="https://zerojudge.tw/ShowProblem?problemid=c462">c462. apcs 交錯字串 (Alternating Strings)(2017/10)</a><a class="headerlink" href="#c462-apcs-交錯字串-alternating-strings201710" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse2" name="__collapse2" type="checkbox" /><div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="cp">#define int long long</span>
+<span class="cp">#define stop system(&quot;pause&quot;);</span>
+<span class="cp">#define N 50001</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">vis</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+<span class="kt">signed</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
+<span class="w">    </span><span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// istringstream cin(&quot;10 \</span>
+<span class="c1">4 7 2 9 6 0 8 1 5 3&quot;);</span>
+<span class="w">    </span><span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// istringstream cin(&quot;3 \</span>
+<span class="c1">0 2 1&quot;);</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ans</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">vis</span><span class="p">[</span><span class="n">i</span><span class="p">]){</span>
+<span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">f</span><span class="o">=</span><span class="n">i</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// cout&lt;&lt;&quot;i: &quot;&lt;&lt;i&lt;&lt;&quot;\n&quot;;</span>
+<span class="w">        </span><span class="n">vis</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">vis</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="n">f</span><span class="p">]]){</span>
+<span class="w">            </span><span class="n">vis</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="n">f</span><span class="p">]]</span><span class="o">=</span><span class="nb">true</span><span class="p">;</span>
+<span class="w">            </span><span class="n">f</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="n">f</span><span class="p">];</span>
+<span class="w">            </span>
+<span class="w">            </span><span class="c1">// cout&lt;&lt;&quot;f: &quot;&lt;&lt;f&lt;&lt;&quot;\n&quot;;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">ans</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse2" tabindex="0" title="expand"></label><label class="collapse" for="__collapse2" tabindex="0" title="collapse"></label></div>
+</div>
+<h2 id="難-c462-apcs-交錯字串-alternating-strings201710"><a href="https://zerojudge.tw/ShowProblem?problemid=c462">難！ c462. apcs 交錯字串 (Alternating Strings)(2017/10)</a><a class="headerlink" href="#難-c462-apcs-交錯字串-alternating-strings201710" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse3" name="__collapse3" type="checkbox" /><div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="cp">#define int long long</span>
+<span class="cp">#define stop system(&quot;pause&quot;);</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="mi">100001</span><span class="p">];</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">;</span>
+<span class="kt">signed</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
+<span class="w">    </span><span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// istringstream cin(&quot;1 \</span>
+<span class="c1">aBBdaaa&quot;);</span>
+<span class="w">    </span><span class="c1">// istringstream cin(&quot;3 \</span>
+<span class="c1">DDaasAAbbCC&quot;);</span>
+<span class="w">    </span><span class="c1">// istringstream cin(&quot;2 \</span>
+<span class="c1">aafAXbbCDCCC&quot;);</span>
+<span class="w">    </span><span class="c1">// istringstream cin(&quot;3 \</span>
+<span class="c1">DDaaAAbbCC&quot;);</span>
+<span class="w">    </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">k</span><span class="p">;</span>
+<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">s</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// for(int i=0;i&lt;n;i++){</span>
+<span class="w">    </span><span class="c1">//     cout&lt;&lt;s[i];</span>
+<span class="w">    </span><span class="c1">// }cout&lt;&lt;&quot;\n&quot;;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="o">&lt;=</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;=</span><span class="sc">&#39;z&#39;</span><span class="p">){</span>
+<span class="w">            </span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span><span class="p">{</span>
+<span class="w">            </span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ans</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">f</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="n">i</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">!=</span><span class="n">f</span><span class="p">){</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">t</span><span class="o">++</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">t</span><span class="o">==</span><span class="n">k</span><span class="p">){</span>
+<span class="w">                </span><span class="n">sum</span><span class="o">+=</span><span class="n">k</span><span class="p">;</span>
+<span class="w">                </span><span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">f</span><span class="o">*=</span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">ans</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="n">sum</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="p">;</span>
+<span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse3" tabindex="0" title="expand"></label><label class="collapse" for="__collapse3" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="e294-apcs-類似題---小崴的新發現20186"><a href="https://zerojudge.tw/ShowProblem?problemid=e294">e294. APCS 類似題 - 小崴的新發現(2018/6)</a><a class="headerlink" href="#e294-apcs-類似題---小崴的新發現20186" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse4" name="__collapse4" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse4" tabindex="0" title="expand"></label><label class="collapse" for="__collapse4" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="d007-習題-q-1-8-子集合的和-201810"><a href="https://judge.tcirc.tw/ShowProblem?problemid=d007">d007: 習題 Q-1-8. 子集合的和 (2018/10)</a><a class="headerlink" href="#d007-習題-q-1-8-子集合的和-201810" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse5" name="__collapse5" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse5" tabindex="0" title="expand"></label><label class="collapse" for="__collapse5" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="紅白彩帶20192"><a href="https://judge.tcirc.tw/ShowProblem?problemid=d101">紅白彩帶(2019/2)</a><a class="headerlink" href="#紅白彩帶20192" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse6" name="__collapse6" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse6" tabindex="0" title="expand"></label><label class="collapse" for="__collapse6" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="e287-機器人的路徑20196"><a href="https://zerojudge.tw/ShowProblem?problemid=e287">e287. 機器人的路徑(2019/6)</a><a class="headerlink" href="#e287-機器人的路徑20196" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse7" name="__collapse7" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse7" tabindex="0" title="expand"></label><label class="collapse" for="__collapse7" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="h027-202001_2-矩陣總和20201"><a href="https://zerojudge.tw/ShowProblem?problemid=h027">h027. 202001_2 矩陣總和(2020/1)</a><a class="headerlink" href="#h027-202001_2-矩陣總和20201" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse8" name="__collapse8" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse8" tabindex="0" title="expand"></label><label class="collapse" for="__collapse8" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="f580-2-骰子20207"><a href="https://zerojudge.tw/ShowProblem?problemid=f580">f580. 2. 骰子(2020/7)</a><a class="headerlink" href="#f580-2-骰子20207" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse9" name="__collapse9" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse9" tabindex="0" title="expand"></label><label class="collapse" for="__collapse9" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="f313-2-人口遷移202010"><a href="https://zerojudge.tw/ShowProblem?problemid=f313">f313. 2. 人口遷移(2020/10)</a><a class="headerlink" href="#f313-2-人口遷移202010" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse10" name="__collapse10" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse10" tabindex="0" title="expand"></label><label class="collapse" for="__collapse10" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="f606-2-流量20211"><a href="https://zerojudge.tw/ShowProblem?problemid=f606">f606. 2. 流量(2021/1)</a><a class="headerlink" href="#f606-2-流量20211" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse11" name="__collapse11" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse11" tabindex="0" title="expand"></label><label class="collapse" for="__collapse11" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="g276-2-魔王迷宮20219"><a href="https://zerojudge.tw/ShowProblem?problemid=g276">g276. 2. 魔王迷宮(2021/9)</a><a class="headerlink" href="#g276-2-魔王迷宮20219" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse12" name="__collapse12" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse12" tabindex="0" title="expand"></label><label class="collapse" for="__collapse12" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="g596-2-動線安排202111"><a href="https://zerojudge.tw/ShowProblem?problemid=g596">g596. 2. 動線安排(2021/11)</a><a class="headerlink" href="#g596-2-動線安排202111" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse13" name="__collapse13" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse13" tabindex="0" title="expand"></label><label class="collapse" for="__collapse13" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="h082-2-贏家預測20221"><a href="https://zerojudge.tw/ShowProblem?problemid=h082">h082. 2. 贏家預測(2022/1)</a><a class="headerlink" href="#h082-2-贏家預測20221" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse14" name="__collapse14" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse14" tabindex="0" title="expand"></label><label class="collapse" for="__collapse14" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="i400-2-字串解碼20226"><a href="https://zerojudge.tw/ShowProblem?problemid=i400">i400. 2. 字串解碼(2022/6)</a><a class="headerlink" href="#i400-2-字串解碼20226" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse15" name="__collapse15" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse15" tabindex="0" title="expand"></label><label class="collapse" for="__collapse15" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="j123-2-運貨站202210"><a href="https://zerojudge.tw/ShowProblem?problemid=j123">j123. 2. 運貨站(2022/10)</a><a class="headerlink" href="#j123-2-運貨站202210" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse16" name="__collapse16" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse16" tabindex="0" title="expand"></label><label class="collapse" for="__collapse16" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="j606-2-造字程式20231"><a href="https://zerojudge.tw/ShowProblem?problemid=j606">j606. 2. 造字程式(2023/1)</a><a class="headerlink" href="#j606-2-造字程式20231" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse17" name="__collapse17" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse17" tabindex="0" title="expand"></label><label class="collapse" for="__collapse17" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="k732-2-特殊位置20236"><a href="https://zerojudge.tw/ShowProblem?problemid=k732">k732. 2. 特殊位置(2023/6)</a><a class="headerlink" href="#k732-2-特殊位置20236" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse18" name="__collapse18" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse18" tabindex="0" title="expand"></label><label class="collapse" for="__collapse18" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="m371-2-卡牌遊戲202310"><a href="https://zerojudge.tw/ShowProblem?problemid=m371">m371. 2. 卡牌遊戲(2023/10)</a><a class="headerlink" href="#m371-2-卡牌遊戲202310" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse19" name="__collapse19" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse19" tabindex="0" title="expand"></label><label class="collapse" for="__collapse19" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="m932-2-蜜蜂觀察20241"><a href="https://zerojudge.tw/ShowProblem?problemid=m932">m932. 2. 蜜蜂觀察(2024/1)</a><a class="headerlink" href="#m932-2-蜜蜂觀察20241" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse20" name="__collapse20" type="checkbox" /><div class="highlight"><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse20" tabindex="0" title="expand"></label><label class="collapse" for="__collapse20" tabindex="0" title="collapse"></label></div>
+</div>
 <h2 id="o077-2-電子畫布"><a href="https://zerojudge.tw/ShowProblem?problemid=o077">o077. 2. 電子畫布</a><a class="headerlink" href="#o077-2-電子畫布" title="Permanent link"></a></h2>
-<div class="collapse-code"><input checked="checked" id="__collapse1" name="__collapse1" type="checkbox" /><div class="highlight"><span class="filename">程式碼</span><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<div class="collapse-code"><input checked="checked" id="__collapse21" name="__collapse21" type="checkbox" /><div class="highlight"><span class="filename">程式碼</span><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 <span class="cp">#define N 555</span>
 <span class="cp">#define nn &quot;\n&quot;</span>
@@ -4697,7 +4926,7 @@ is now available!
 <span class="c1">//---------------------------------------------------</span>
 <span class="p">}</span>
 </code></pre></div>
-<div class="code-footer"><label class="expand" for="__collapse1" tabindex="0" title="expand"></label><label class="collapse" for="__collapse1" tabindex="0" title="collapse"></label></div>
+<div class="code-footer"><label class="expand" for="__collapse21" tabindex="0" title="expand"></label><label class="collapse" for="__collapse21" tabindex="0" title="collapse"></label></div>
 </div>
 
 
