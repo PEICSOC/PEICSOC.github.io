@@ -744,23 +744,6 @@ is now available!
   
   
   
-    <li class="md-tabs__item">
-      <a href="../md-%E8%A7%A3%E5%AF%86%20APCS/%E8%A7%A3%E5%AF%86%20APCS.html" class="md-tabs__link">
-        
-  
-    
-  
-  解密 APCS
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
     
     
       <li class="md-tabs__item">
@@ -3393,6 +3376,33 @@ is now available!
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#o712-2-蒐集寶石202410" class="md-nav__link">
+    <span class="md-ellipsis">
+      o712. 2. 蒐集寶石2024/10
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q182-2-字串操作20241" class="md-nav__link">
+    <span class="md-ellipsis">
+      q182. 2. 字串操作2024/1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q837-2-轉盤得分20256" class="md-nav__link">
+    <span class="md-ellipsis">
+      q837. 2. 轉盤得分2025/6
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4194,27 +4204,6 @@ is now available!
   
   
   
-    <li class="md-nav__item">
-      <a href="../md-%E8%A7%A3%E5%AF%86%20APCS/%E8%A7%A3%E5%AF%86%20APCS.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    解密 APCS
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
       
@@ -4238,10 +4227,10 @@ is now available!
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -4253,8 +4242,8 @@ is now available!
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             其他
           </label>
@@ -4620,6 +4609,33 @@ is now available!
   <a href="#o077-2-電子畫布" class="md-nav__link">
     <span class="md-ellipsis">
       o077. 2. 電子畫布
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o712-2-蒐集寶石202410" class="md-nav__link">
+    <span class="md-ellipsis">
+      o712. 2. 蒐集寶石2024/10
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q182-2-字串操作20241" class="md-nav__link">
+    <span class="md-ellipsis">
+      q182. 2. 字串操作2024/1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q837-2-轉盤得分20256" class="md-nav__link">
+    <span class="md-ellipsis">
+      q837. 2. 轉盤得分2025/6
     </span>
   </a>
   
@@ -5809,7 +5825,98 @@ is now available!
 <div class="code-footer"><label class="expand" for="__collapse16" tabindex="0" title="expand"></label><label class="collapse" for="__collapse16" tabindex="0" title="collapse"></label></div>
 </div>
 <h2 id="i400-2-字串解碼20226"><a href="https://zerojudge.tw/ShowProblem?problemid=i400">i400. 2. 字串解碼(2022/6)</a><a class="headerlink" href="#i400-2-字串解碼20226" title="Permanent link"></a></h2>
-<div class="collapse-code"><input checked="checked" id="__collapse17" name="__collapse17" type="checkbox" /><div class="highlight"><pre><span></span><code>
+<div class="collapse-code"><input checked="checked" id="__collapse17" name="__collapse17" type="checkbox" /><div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="cp">#define int long long</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">[</span><span class="mi">200</span><span class="p">][</span><span class="mi">200</span><span class="p">]</span><span class="o">=</span><span class="p">{};</span>
+<span class="n">string</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="n">string</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+
+<span class="n">string</span><span class="w"> </span><span class="nf">sub</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">){</span>
+<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">re</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">l</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">r</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="n">re</span><span class="o">+=</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">r</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">){</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">re</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">string</span><span class="w"> </span><span class="nf">asub</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">){</span>
+<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">re</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">l</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">r</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="n">re</span><span class="o">+=</span><span class="n">ans</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">re</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">signed</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
+<span class="w">    </span><span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="c1">//    istringstream cin(&quot;1 5 \</span>
+<span class="c1">10110 \</span>
+<span class="c1">CABAD&quot;);</span>
+<span class="c1">//    istringstream cin(&quot;3 6 \</span>
+<span class="c1">111110 \</span>
+<span class="c1">101101 \</span>
+<span class="c1">000000 \</span>
+<span class="c1">RETYWQ&quot;);</span>
+<span class="w">    </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="n">m</span><span class="p">;</span>
+<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">c</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">m</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+<span class="w">            </span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="sc">&#39;0&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">s</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">n</span><span class="mi">-1</span><span class="p">;</span><span class="n">i</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">--</span><span class="p">){</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="n">m</span><span class="mi">-1</span><span class="p">;</span><span class="n">j</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">;</span><span class="n">j</span><span class="o">--</span><span class="p">){</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">vv</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+<span class="w">            </span><span class="n">sum</span><span class="o">+=</span><span class="n">vv</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">vv</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+<span class="w">                </span><span class="n">ans</span><span class="o">=</span><span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">ans</span><span class="p">;</span>
+<span class="w">                </span><span class="n">s</span><span class="o">=</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="mi">-2</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">else</span><span class="p">{</span>
+<span class="w">                </span><span class="n">ans</span><span class="o">=</span><span class="n">ans</span><span class="o">+</span><span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+<span class="w">                </span><span class="n">s</span><span class="o">=</span><span class="n">sub</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="mi">-2</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+<span class="w">            </span><span class="n">ans</span><span class="o">=</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">ans</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">else</span><span class="p">{</span>
+<span class="w">            </span><span class="n">ans</span><span class="o">=</span><span class="n">ans</span><span class="o">+</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">sum</span><span class="o">+=</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">        </span><span class="n">s</span><span class="o">=</span><span class="n">ans</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">sn</span><span class="o">=</span><span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">sn</span><span class="o">==</span><span class="mi">2</span><span class="p">){</span>
+<span class="w">            </span><span class="n">s</span><span class="o">=</span><span class="n">asub</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">asub</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">sn</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">){</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">sum</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">){</span><span class="c1">//odd</span>
+<span class="w">                </span><span class="k">if</span><span class="p">(</span><span class="n">sn</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span><span class="c1">//01234</span>
+<span class="w">                    </span><span class="n">s</span><span class="o">=</span><span class="n">asub</span><span class="p">(</span><span class="n">sn</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">sn</span><span class="mi">-1</span><span class="p">)</span><span class="o">+</span><span class="n">s</span><span class="p">[</span><span class="n">sn</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">asub</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">sn</span><span class="o">/</span><span class="mi">2-1</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">else</span><span class="p">{</span><span class="c1">//0123</span>
+<span class="w">                    </span><span class="n">s</span><span class="o">=</span><span class="n">asub</span><span class="p">(</span><span class="n">sn</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">sn</span><span class="mi">-1</span><span class="p">)</span><span class="o">+</span><span class="n">asub</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">sn</span><span class="o">/</span><span class="mi">2-1</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">ans</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">s</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
 <div class="code-footer"><label class="expand" for="__collapse17" tabindex="0" title="expand"></label><label class="collapse" for="__collapse17" tabindex="0" title="collapse"></label></div>
 </div>
@@ -5879,6 +5986,21 @@ is now available!
 <span class="p">}</span>
 </code></pre></div>
 <div class="code-footer"><label class="expand" for="__collapse23" tabindex="0" title="expand"></label><label class="collapse" for="__collapse23" tabindex="0" title="collapse"></label></div>
+</div>
+<h2 id="o712-2-蒐集寶石202410"><a href="https://zerojudge.tw/ShowProblem?problemid=o712">o712. 2. 蒐集寶石2024/10</a><a class="headerlink" href="#o712-2-蒐集寶石202410" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse24" name="__collapse24" type="checkbox" /><div class="highlight"><span class="filename">程式碼</span><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse24" tabindex="0" title="expand"></label><label class="collapse" for="__collapse24" tabindex="0" title="collapse"></label></div>
+</div>
+<h2 id="q182-2-字串操作20241"><a href="https://zerojudge.tw/ShowProblem?problemid=q182">q182. 2. 字串操作2024/1</a><a class="headerlink" href="#q182-2-字串操作20241" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse25" name="__collapse25" type="checkbox" /><div class="highlight"><span class="filename">程式碼</span><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse25" tabindex="0" title="expand"></label><label class="collapse" for="__collapse25" tabindex="0" title="collapse"></label></div>
+</div>
+<h2 id="q837-2-轉盤得分20256"><a href="https://zerojudge.tw/ShowProblem?problemid=q837">q837. 2. 轉盤得分2025/6</a><a class="headerlink" href="#q837-2-轉盤得分20256" title="Permanent link"></a></h2>
+<div class="collapse-code"><input checked="checked" id="__collapse26" name="__collapse26" type="checkbox" /><div class="highlight"><span class="filename">程式碼</span><pre><span></span><code>
+</code></pre></div>
+<div class="code-footer"><label class="expand" for="__collapse26" tabindex="0" title="expand"></label><label class="collapse" for="__collapse26" tabindex="0" title="collapse"></label></div>
 </div>
 
 
