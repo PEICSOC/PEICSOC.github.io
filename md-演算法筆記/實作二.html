@@ -6071,7 +6071,41 @@ is now available!
 <div class="code-footer"><label class="expand" for="__collapse18" tabindex="0" title="expand"></label><label class="collapse" for="__collapse18" tabindex="0" title="collapse"></label></div>
 </div>
 <h2 id="j606-2-造字程式20231"><a href="https://zerojudge.tw/ShowProblem?problemid=j606">j606. 2. 造字程式(2023/1)</a><a class="headerlink" href="#j606-2-造字程式20231" title="Permanent link"></a></h2>
-<div class="collapse-code"><input checked="checked" id="__collapse19" name="__collapse19" type="checkbox" /><div class="highlight"><pre><span></span><code>
+<div class="collapse-code"><input checked="checked" id="__collapse19" name="__collapse19" type="checkbox" /><div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
+<span class="w">    </span><span class="n">ios</span><span class="o">::</span><span class="n">sync_with_stdio</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cin</span><span class="p">.</span><span class="n">tie</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="c1">//    istringstream cin(&quot;5 4 1 \</span>
+<span class="c1">abcde \</span>
+<span class="c1">2 1 3 5 4 \</span>
+<span class="c1">5 1 2 4 3 \</span>
+<span class="c1">4 1 2 3 5 \</span>
+<span class="c1">3 1 4 5 2&quot;);</span>
+<span class="c1">//    istringstream cin(&quot;4 3 4 \</span>
+<span class="c1">abac \</span>
+<span class="c1">4 1 3 2 \</span>
+<span class="c1">1 2 3 4 \</span>
+<span class="c1">2 3 4 1&quot;);</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">r</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">k</span><span class="o">&gt;&gt;</span><span class="n">q</span><span class="o">&gt;&gt;</span><span class="n">r</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">ans</span><span class="p">[</span><span class="mi">100</span><span class="p">][</span><span class="mi">100</span><span class="p">];</span>
+<span class="w">    </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">ans</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">k</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="w">            </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="p">;</span>
+<span class="w">            </span><span class="n">ans</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">x</span><span class="mi">-1</span><span class="p">]</span><span class="o">=</span><span class="n">ans</span><span class="p">[</span><span class="n">i</span><span class="mi">-1</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">r</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">q</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">            </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
 <div class="code-footer"><label class="expand" for="__collapse19" tabindex="0" title="expand"></label><label class="collapse" for="__collapse19" tabindex="0" title="collapse"></label></div>
 </div>
