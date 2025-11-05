@@ -4017,6 +4017,39 @@ is now available!
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="資料增強(data augmentation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#幾何轉換geometric-transformations" class="md-nav__link">
+    <span class="md-ellipsis">
+      幾何轉換（Geometric Transformations）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#顏色與亮度調整color--intensity-adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      顏色與亮度調整（Color &amp; Intensity Adjustments）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#組合與高階方法" class="md-nav__link">
+    <span class="md-ellipsis">
+      組合與高階方法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -4753,6 +4786,39 @@ is now available!
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="資料增強(data augmentation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#幾何轉換geometric-transformations" class="md-nav__link">
+    <span class="md-ellipsis">
+      幾何轉換（Geometric Transformations）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#顏色與亮度調整color--intensity-adjustments" class="md-nav__link">
+    <span class="md-ellipsis">
+      顏色與亮度調整（Color &amp; Intensity Adjustments）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#組合與高階方法" class="md-nav__link">
+    <span class="md-ellipsis">
+      組合與高階方法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -4954,6 +5020,63 @@ w^T \cdot x = \begin{bmatrix} 3 \\ -2 \end{bmatrix}
 <p>解決方法：</p>
 <h4 id="增加訓練資料">增加訓練資料<a class="headerlink" href="#增加訓練資料" title="Permanent link"></a></h4>
 <h4 id="資料增強data-augmentation">資料增強(data augmentation)<a class="headerlink" href="#資料增強data-augmentation" title="Permanent link"></a></h4>
+<h5 id="幾何轉換geometric-transformations">幾何轉換（Geometric Transformations）<a class="headerlink" href="#幾何轉換geometric-transformations" title="Permanent link"></a></h5>
+<ul>
+<li>
+<p><strong>旋轉（Rotation）</strong>：隨機旋轉一定角度。</p>
+</li>
+<li>
+<p><strong>平移（Translation）</strong>：隨機在水平或垂直方向平移。</p>
+</li>
+<li>
+<p><strong>縮放（Scaling / Zooming）</strong>：放大或縮小影像。</p>
+</li>
+<li>
+<p><strong>翻轉（Flipping）</strong>：水平或垂直翻轉。</p>
+</li>
+<li>
+<p><strong>裁切（Cropping）</strong>：隨機剪取部分影像。</p>
+</li>
+<li>
+<p><strong>仿射變換（Affine / Perspective Transform）</strong>：改變影像透視效果。</p>
+</li>
+</ul>
+<h5 id="顏色與亮度調整color--intensity-adjustments">顏色與亮度調整（Color &amp; Intensity Adjustments）<a class="headerlink" href="#顏色與亮度調整color--intensity-adjustments" title="Permanent link"></a></h5>
+<ul>
+<li>
+<p><strong>亮度調整（Brightness）</strong></p>
+</li>
+<li>
+<p><strong>對比度調整（Contrast）</strong></p>
+</li>
+<li>
+<p><strong>飽和度（Saturation）</strong></p>
+</li>
+<li>
+<p><strong>色相偏移（Hue shift）</strong></p>
+</li>
+<li>
+<p><strong>高斯雜訊（Gaussian Noise）</strong></p>
+</li>
+<li>
+<p><strong>模糊（Blur）或銳化（Sharpen）</strong></p>
+</li>
+</ul>
+<h5 id="組合與高階方法">組合與高階方法<a class="headerlink" href="#組合與高階方法" title="Permanent link"></a></h5>
+<ul>
+<li>
+<p><strong>Cutout / Random Erasing</strong>：隨機遮住影像區域。</p>
+</li>
+<li>
+<p><strong>Mixup</strong>：線性混合兩張圖片與標籤。</p>
+</li>
+<li>
+<p><strong>CutMix</strong>：剪下部分影像貼到另一張圖上。</p>
+</li>
+<li>
+<p><strong>Mosaic / Copy-Paste</strong>：將多張圖片拼接成一張。</p>
+</li>
+</ul>
 <h4 id="限制模型">限制模型<a class="headerlink" href="#限制模型" title="Permanent link"></a></h4>
 <p>限制減少維度之類的</p>
 <h4 id="dropout"><a href="%E7%A5%9E%E7%B6%93%E7%B6%B2%E8%B7%AF%28Neural%20Network%29.html#dropout">Dropout</a><a class="headerlink" href="#dropout" title="Permanent link"></a></h4>
