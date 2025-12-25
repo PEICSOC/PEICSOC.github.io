@@ -14,6 +14,8 @@
         <link rel="prev" href="../md-%E9%80%A3%E7%B5%90Google%E6%96%87%E4%BB%B6%E7%9A%84%E7%AF%84%E4%BE%8B/%E9%80%A3%E7%B5%90Google%E6%96%87%E4%BB%B6%E7%9A%84%E7%AF%84%E4%BE%8B.html">
       
       
+        <link rel="next" href="5.html">
+      
       
         <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../feed_rss_created.xml">
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../feed_rss_updated.xml">
@@ -4247,6 +4249,8 @@ is now available!
       
         
       
+        
+      
     
     
     
@@ -4363,6 +4367,29 @@ is now available!
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="5.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Ch5 Dining out 全文集中區
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -4431,19 +4458,188 @@ is now available!
 
   <h1>Ch4 Travel 全文集中區</h1>
 
+<script>
+(function () {
+  let currentBtn = null;
+  let currentUtterance = null;
+
+  function supported() {
+    return ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window);
+  }
+
+  // 建立語音選單（只建一次）
+  function ensureVoicePicker() {
+    if (document.getElementById("tts-voice-picker")) return;
+
+    const host = document.createElement("div");
+    host.style.margin = "8px 0 14px";
+    host.style.display = "flex";
+    host.style.alignItems = "center";
+    host.style.gap = "10px";
+    host.style.flexWrap = "wrap";
+
+    const label = document.createElement("span");
+    label.textContent = "Voice:";
+    label.style.fontSize = "14px";
+    label.style.color = "#555";
+
+    const sel = document.createElement("select");
+    sel.id = "tts-voice-picker";
+    sel.style.padding = "6px 8px";
+    sel.style.borderRadius = "8px";
+    sel.style.border = "1px solid rgba(0,0,0,.2)";
+    sel.style.font = "inherit";
+
+    const hint = document.createElement("span");
+    hint.id = "tts-voice-hint";
+    hint.style.fontSize = "12px";
+    hint.style.color = "#777";
+
+    host.appendChild(label);
+    host.appendChild(sel);
+    host.appendChild(hint);
+
+    // 插在第一個 .tts 前面
+    const first = document.querySelector(".tts");
+    if (first && first.parentElement) {
+      first.parentElement.insertBefore(host, first);
+    } else {
+      document.body.insertBefore(host, document.body.firstChild);
+    }
+
+    function populateVoices() {
+      const voices = speechSynthesis.getVoices() || [];
+      sel.innerHTML = "";
+
+      // 你可以改成只顯示特定語系（例如只顯示 en-*）
+      // const filtered = voices.filter(v => /^en[-_]/i.test(v.lang));
+      const filtered = voices;
+
+      filtered.forEach((v, idx) => {
+        const opt = document.createElement("option");
+        opt.value = String(idx);
+        opt.textContent = `${v.lang} — ${v.name}${v.localService ? "" : " (cloud)"}`;
+        opt.dataset.lang = v.lang;
+        opt.dataset.name = v.name;
+        sel.appendChild(opt);
+      });
+
+      hint.textContent = filtered.length ? `Detected ${filtered.length} voices on this device.` : "No voices found.";
+    }
+
+    // voices 可能延遲載入
+    populateVoices();
+    speechSynthesis.onvoiceschanged = populateVoices;
+  }
+
+  function getSelectedVoice() {
+    const sel = document.getElementById("tts-voice-picker");
+    const voices = speechSynthesis.getVoices() || [];
+    if (!sel || !voices.length) return null;
+    const idx = parseInt(sel.value, 10);
+    return Number.isFinite(idx) ? voices[idx] : null;
+  }
+
+  function stop() {
+    try { speechSynthesis.cancel(); } catch (_) {}
+    if (currentBtn) {
+      currentBtn.textContent = "▶";
+      currentBtn.setAttribute("aria-pressed", "false");
+      currentBtn = null;
+    }
+    currentUtterance = null;
+  }
+
+  function speak(text, lang, btn) {
+    if (!supported()) return;
+
+    const t = (text || "").trim();
+    if (!t) return;
+
+    // 同顆再按一次：停止
+    if (currentBtn === btn) {
+      stop();
+      return;
+    }
+
+    stop();
+
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = lang || "en-US";
+
+    const v = getSelectedVoice();
+    if (v) {
+      u.voice = v;
+      // 若你希望語音選了就強制使用其 lang，可打開下一行：
+      // u.lang = v.lang;
+    }
+
+    btn.textContent = "■";
+    btn.setAttribute("aria-pressed", "true");
+    currentBtn = btn;
+    currentUtterance = u;
+
+    u.onend = stop;
+    u.onerror = stop;
+
+    // 觸發 voice 載入
+    speechSynthesis.getVoices();
+    speechSynthesis.speak(u);
+  }
+
+  function init() {
+    if (!supported()) return;
+
+    ensureVoicePicker();
+
+    document.querySelectorAll(".tts").forEach(span => {
+      // 避免重複加按鈕
+      if (span.querySelector(":scope > button.tts-btn")) return;
+
+      // 關鍵：先把「純句子」保存起來，避免把按鈕文字一起唸
+      const pureText = (span.textContent || "").trim();
+      span.setAttribute("data-tts", pureText);
+
+      const btn = document.createElement("button");
+      btn.className = "tts-btn";
+      btn.type = "button";
+      btn.textContent = "▶";
+      btn.setAttribute("aria-pressed", "false");
+      btn.setAttribute("aria-label", "Play");
+
+      const lang = span.getAttribute("data-lang") || "en-US";
+      btn.onclick = () => speak(span.getAttribute("data-tts"), lang, btn);
+
+      span.appendChild(btn);
+    });
+  }
+
+  // 若是 Material instant navigation，snippets 注入的 script 有時不會重新執行；
+  // 但你目前用 snippets 時，通常仍會在初次載入時執行。
+  // 保險：DOMContentLoaded 再跑一次（不會重複加按鈕）
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+
 <h2 id="q2"><strong>Q2.</strong><a class="headerlink" href="#q2" title="Permanent link"></a></h2>
-<!-- A) Several fishing boats are docked.
+<!-- 
+A) Several fishing boats are docked.
 
 B) A boat is receiving maintenance.
 
 C) The boats are being rocked by a storm.
 
-D) The dock is empty of any boats. -->
-<p>A) <span class="tts" data-lang="en-US">Several fishing boats are docked.</span></p>
-<p>A) <span class="tts" data-lang="en-US">Several fishing boats are docked.</span><br />
-B) <span class="tts" data-lang="en-US">A boat is receiving maintenance.</span><br />
-C) <span class="tts" data-lang="en-US">The boats are being rocked by a storm.</span><br />
-D) <span class="tts" data-lang="en-US">The dock is empty of any boats.</span></p>
+D) The dock is empty of any boats. 
+-->
+
+<p>A) <span class="tts">Several fishing boats are docked.</span><br />
+B) <span class="tts">A boat is receiving maintenance.</span><br />
+C) <span class="tts">The boats are being rocked by a storm.</span><br />
+D) <span class="tts">The dock is empty of any boats.</span></p>
 <p><img alt="alt text" src="image-1.png" /></p>
 <h2 id="q4"><strong>Q4.</strong><a class="headerlink" href="#q4" title="Permanent link"></a></h2>
 <p>A) Several pedestrians are crossing the street.</p>
@@ -4510,6 +4706,24 @@ D) <span class="tts" data-lang="en-US">The dock is empty of any boats.</span></p
           </div>
         </a>
       
+      
+        <a
+          href="5.html"
+          class="md-footer__link md-footer__link--next"
+          rel="next"
+        >
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Ch5 Dining out 全文集中區
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+          </div>
+        </a>
       
     </nav>
   
