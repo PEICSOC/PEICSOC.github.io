@@ -5040,8 +5040,12 @@ is now available!
 
 <!--
 把這整段放在你的 tts.md（snippets）即可。
-差異：不再用 "▶/■" 文字，改用 CSS 畫圖示（播放三角形 / 停止方塊）
-JS 只負責切換 data-state="play|stop"，不會再改 textContent。
+
+這版修正：
+1) 不再讓整句文字用 inline-flex（會造成斷行/空白怪現象，像你看到的 st/nd 跑掉）
+2) 自動用 wrapper 把「文字」與「按鈕」分開，避免按鈕影響文字排版
+3) 不用 ▶/■ 文字，改用 CSS 畫圖示（播放三角形 / 停止方塊）
+4) Voice bar 插在第一個 H1 後面（找不到 H1 就放內容最上方）
 -->
 
 <style>
@@ -5049,12 +5053,16 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
    你可以改的地方：按鈕大小/外觀
    ========================= */
 
-/* 句子 + 按鈕排列 */
-/* 句子 + 按鈕排列 */
-.tts{
-  display: inline-flex;
+/* wrapper：把文字與按鈕放同一行，但文字本身維持正常排版 */
+.tts-wrap{
+  display: inline-flex;      /* ✅ 這裡用 flex OK，因為文字與按鈕分開了 */
   align-items: center;
-  gap: 10px;
+  gap: 10px;                 /* ✅ 可改：按鈕與文字距離 */
+}
+
+/* 文字本體：保持正常 inline 流（避免 st/nd 被排版拆開跑位） */
+.tts{
+  display: inline;           /* ✅ 關鍵：不要 inline-flex */
 }
 
 /* 透明按鈕：顏色跟隨主題（亮/暗自動） */
@@ -5063,29 +5071,32 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
   border: 0;
   font: inherit;
 
-  width: 44px;
-  height: 44px;
+  width: 44px;               /* ✅ 可改：點擊區寬 */
+  height: 44px;              /* ✅ 可改：點擊區高 */
   padding: 0;
+
   cursor: pointer;
   line-height: 1;
 
   display: inline-grid;
   place-items: center;
+  position: relative;
 
   /* ✅ 亮/暗模式都適用：Material 主題色 → fallback 文字色 */
   color: var(--md-primary-fg-color, currentColor);
+
+  touch-action: manipulation;
 }
 
 /* hover：改成 accent */
 .tts-btn:hover{
   color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
-  filter: none; /* 避免暗色模式 brightness 反效果 */
 }
 
-/* 播放中狀態：用 accent 或降低透明度（二選一） */
+/* 播放中狀態：用 accent */
 .tts-btn[aria-pressed="true"]{
   color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
-  /* 或你想淡一點就改用：opacity: 0.75; */
+  opacity: 0.85;             /* ✅ 可改：播放中視覺提示 */
 }
 
 /* 鍵盤焦點可視化 */
@@ -5096,27 +5107,32 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
 }
 
 /* ===== 用 CSS 畫圖示（用 currentColor 上色） ===== */
+/* 播放：三角形 */
 .tts-btn[data-state="play"]::before{
   content: "";
   display: block;
   width: 0;
   height: 0;
+
   border-style: solid;
-  border-width: 9px 0 9px 14px;
+  border-width: 9px 0 9px 14px;   /* ✅ 可改：三角形比例 */
   border-color: transparent transparent transparent currentColor;
   transform: translateX(1px);
 }
 
+/* 停止：方塊 */
 .tts-btn[data-state="stop"]::before{
   content: "";
   display: block;
-  width: 16px;
+  width: 16px;                    /* ✅ 可改：方塊大小 */
   height: 16px;
   background: currentColor;
-  border-radius: 3px;
+  border-radius: 3px;             /* ✅ 可改：0 = 更方 */
 }
 
-/* Voice bar：也跟著亮/暗模式 */
+/* =========================
+   Voice bar：插在第一個 H1 後
+   ========================= */
 #tts-topbar{
   display: flex;
   align-items: center;
@@ -5125,7 +5141,6 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
   padding: 10px 12px;
   margin: 12px 0 16px;
 
-  /* ✅ Material 有專用變數就用，沒有就 fallback */
   border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.12));
   border-radius: 12px;
   background: var(--md-default-bg-color, rgba(255,255,255,.95));
@@ -5136,7 +5151,7 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
   padding: 8px 10px;
   border-radius: 10px;
   border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.2));
-  background: transparent; /* ✅ 暗色模式不要白底 */
+  background: transparent;
   color: inherit;
   font: inherit;
   max-width: min(720px, 85vw);
@@ -5146,32 +5161,30 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
   color: var(--md-default-fg-color--light, #777);
   font-size: 12px;
 }
-/* ===== 語音選單：暗色模式下黑底 ===== */
+
+/* ===== 語音選單：暗色模式下黑底（你用 dracula）===== */
 [data-md-color-scheme="dracula"] #tts-voice-picker{
-  background-color: #1e1e1e;   /* 黑底 */
-  color: #fff;                /* 白字 */
+  background-color: #1e1e1e;
+  color: #fff;
   border-color: rgba(255,255,255,.25);
 }
-
-/* option 背景（部分瀏覽器需要） */
 [data-md-color-scheme="dracula"] #tts-voice-picker option{
   background-color: #1e1e1e;
   color: #fff;
 }
 
-
 /* ✅ 可改：手機再大一點（可刪除整段） */
 @media (max-width: 600px){
   .tts-btn{
-    width: 52px;             /* ✅ 可改 */
-    height: 52px;            /* ✅ 可改 */
+    width: 52px;
+    height: 52px;
   }
   .tts-btn[data-state="play"]::before{
-    border-width: 10px 0 10px 16px;     /* ✅ 可改：手機三角形更大 */
+    border-width: 10px 0 10px 16px;
   }
   .tts-btn[data-state="stop"]::before{
-    width: 18px;                         /* ✅ 可改 */
-    height: 18px;                        /* ✅ 可改 */
+    width: 18px;
+    height: 18px;
   }
 }
 </style>
@@ -5194,7 +5207,6 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
   function stop() {
     try { speechSynthesis.cancel(); } catch (_) {}
     if (currentBtn) {
-      // ✅ 不用文字，改用狀態切換
       currentBtn.setAttribute("data-state", "play");
       currentBtn.setAttribute("aria-pressed", "false");
       currentBtn = null;
@@ -5313,7 +5325,6 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
     u.pitch = 1.0;  // ✅ 可改
     /* ========================= */
 
-    // ✅ 不用文字，改用狀態切換
     btn.setAttribute("data-state", "stop");
     btn.setAttribute("aria-pressed", "true");
     currentBtn = btn;
@@ -5326,26 +5337,38 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
   }
 
   function attachButtons() {
-    document.querySelectorAll(".tts").forEach(span => {
-      if (span.querySelector(":scope > button.tts-btn")) return;
+    // 支援兩種寫法：
+    // 1) <span class="tts">文字</span>（舊用法）
+    // 2) <span class="tts-wrap"><span class="tts">文字</span></span>（新用法）
+    document.querySelectorAll(".tts").forEach(textSpan => {
+      // 如果已經被包成 tts-wrap，就取最外層；否則建立 wrapper
+      let wrap = textSpan.closest(".tts-wrap");
 
-      // ✅ 保存純句子，避免把按鈕一起唸
-      const pure = (span.getAttribute("data-tts") || span.textContent || "").trim();
-      span.setAttribute("data-tts", pure);
+      if (!wrap) {
+        wrap = document.createElement("span");
+        wrap.className = "tts-wrap";
+        textSpan.parentNode.insertBefore(wrap, textSpan);
+        wrap.appendChild(textSpan);
+      }
+
+      // 避免重複加按鈕
+      if (wrap.querySelector(":scope > button.tts-btn")) return;
+
+      // 保存純文字（不受按鈕影響）
+      const pure = (textSpan.getAttribute("data-tts") || textSpan.textContent || "").trim();
+      textSpan.setAttribute("data-tts", pure);
 
       const btn = document.createElement("button");
       btn.className = "tts-btn";
       btn.type = "button";
-
-      // ✅ 初始狀態：播放（由 CSS 畫三角形）
       btn.setAttribute("data-state", "play");
       btn.setAttribute("aria-pressed", "false");
       btn.setAttribute("aria-label", "Play/Stop");
 
-      const lang = span.getAttribute("data-lang") || DEFAULT_LANG;
-      btn.onclick = () => speak(span.getAttribute("data-tts"), lang, btn);
+      const lang = textSpan.getAttribute("data-lang") || DEFAULT_LANG;
+      btn.onclick = () => speak(textSpan.getAttribute("data-tts"), lang, btn);
 
-      span.appendChild(btn);
+      wrap.appendChild(btn);
     });
   }
 
@@ -5596,17 +5619,17 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
 <p>To: *@deltamotorcompany.com</p>
 <p>From: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#103;&#114;&#97;&#110;&#116;&#95;&#103;&#64;&#100;&#101;&#108;&#116;&#97;&#109;&#111;&#116;&#111;&#114;&#99;&#111;&#109;&#112;&#97;&#110;&#121;&#46;&#99;&#111;&#109;">&#103;&#114;&#97;&#110;&#116;&#95;&#103;&#64;&#100;&#101;&#108;&#116;&#97;&#109;&#111;&#116;&#111;&#114;&#99;&#111;&#109;&#112;&#97;&#110;&#121;&#46;&#99;&#111;&#109;</a></p>
 <p><span class="tts">Subject: Annual Conference</p>
-<p><span class="tts">Good morning, everyone. I hope you had a relaxing weekend and are ready to get back to work. </p>
-<p><span class="tts">I'm sending you this email to let you know our annual conference has been booked for December 1<sup>st</sup> and 2<sup>nd</sup> at the Lakeview Hotel. </p>
-<p><span class="tts">As you are no doubt aware, we will be discussing the sales for this past year, in addition to planned marketing campaigns and upcoming models for next year. </p>
-<p><span class="tts">We will be arriving at the hotel at 9am on the 1<sup>st</sup>, and the meetings are scheduled to last until 1pm. </p>
-<p><span class="tts">The hotel offers quite a few amenities for guests, so please feel free to make use of them. </p>
-<p><span class="tts">As I understand it, there is going to be a live musical performance by an up-and-coming pop star that night that is supposed to be quite popular and is highly recommended.</p>
-<p><span class="tts">If you have any questions about the conference, please feel free to send me an email.</p>
+<p><span class="tts">Good morning, everyone. I hope you had a relaxing weekend and are ready to get back to work. </span></p>
+<p><span class="tts">I'm sending you this email to let you know our annual conference has been booked for December 1<sup>st</sup> and 2<sup>nd</sup> at the Lakeview Hotel. </span></p>
+<p><span class="tts">As you are no doubt aware, we will be discussing the sales for this past year, in addition to planned marketing campaigns and upcoming models for next year. </span></p>
+<p><span class="tts">We will be arriving at the hotel at 9am on the 1<sup>st</sup>, and the meetings are scheduled to last until 1pm. </span></p>
+<p><span class="tts">The hotel offers quite a few amenities for guests, so please feel free to make use of them. </span></p>
+<p><span class="tts">As I understand it, there is going to be a live musical performance by an up-and-coming pop star that night that is supposed to be quite popular and is highly recommended.</span></p>
+<p><span class="tts">If you have any questions about the conference, please feel free to send me an email.</span></p>
 <p><span class="tts">Sincerely, Grant Gustav National Manager, Marketing and Sales</p>
 <hr />
 <p><img alt="alt text" src="Gemini_Generated_Image_xf1zzxf1zzxf1zzx.png" /></p>
-<p><span class="tts">Scheduled Lakeview Hotel Performances for December 1<sup>st</sup></p>
+<p><span class="tts">Scheduled Lakeview Hotel Performances for December 1<sup>st</sup> </span></p>
 <hr />
 <p><span class="tts">Talent Show</p>
 <p>19:00 – 20:30</p>
