@@ -4466,6 +4466,18 @@ JS 只負責切換 data-state="play|stop"，不會再改 textContent。
   color: var(--md-default-fg-color--light, #777);
   font-size: 12px;
 }
+/* ===== 語音選單：暗色模式下黑底 ===== */
+[data-md-color-scheme="dracula"] #tts-voice-picker{
+  background-color: #1e1e1e;   /* 黑底 */
+  color: #fff;                /* 白字 */
+  border-color: rgba(255,255,255,.25);
+}
+
+/* option 背景（部分瀏覽器需要） */
+[data-md-color-scheme="dracula"] #tts-voice-picker option{
+  background-color: #1e1e1e;
+  color: #fff;
+}
 
 
 /* ✅ 可改：手機再大一點（可刪除整段） */
