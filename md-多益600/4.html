@@ -412,8 +412,6 @@ document.addEventListener("DOMContentLoaded", function() {
       
     
     
-      <link rel="stylesheet" href="../theme/javascripts/tts-inline.js">
-    
       <link rel="stylesheet" href="../assets/pymdownx-extras/extra-8611f6c398.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -4343,7 +4341,7 @@ is now available!
         <li class="md-nav__item">
   <a href="#q2" class="md-nav__link">
     <span class="md-ellipsis">
-      Q2.
+      Q2
     </span>
   </a>
   
@@ -4352,7 +4350,34 @@ is now available!
         <li class="md-nav__item">
   <a href="#q4" class="md-nav__link">
     <span class="md-ellipsis">
-      Q4.
+      Q4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q5
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q8.
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q10.
     </span>
   </a>
   
@@ -4424,7 +4449,7 @@ is now available!
         <li class="md-nav__item">
   <a href="#q2" class="md-nav__link">
     <span class="md-ellipsis">
-      Q2.
+      Q2
     </span>
   </a>
   
@@ -4433,7 +4458,34 @@ is now available!
         <li class="md-nav__item">
   <a href="#q4" class="md-nav__link">
     <span class="md-ellipsis">
-      Q4.
+      Q4
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q5
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q8" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q8.
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q10" class="md-nav__link">
+    <span class="md-ellipsis">
+      Q10.
     </span>
   </a>
   
@@ -4458,78 +4510,228 @@ is now available!
 
   <h1>Ch4 Travel 全文集中區</h1>
 
+<!--
+把這整段放在你的 tts.md（snippets）即可。
+差異：不再用 "▶/■" 文字，改用 CSS 畫圖示（播放三角形 / 停止方塊）
+JS 只負責切換 data-state="play|stop"，不會再改 textContent。
+-->
+
+<style>
+/* =========================
+   你可以改的地方：按鈕大小/外觀
+   ========================= */
+
+/* 句子 + 按鈕排列 */
+/* 句子 + 按鈕排列 */
+.tts{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 透明按鈕：顏色跟隨主題（亮/暗自動） */
+.tts-btn{
+  background: transparent;
+  border: 0;
+  font: inherit;
+
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+
+  display: inline-grid;
+  place-items: center;
+
+  /* ✅ 亮/暗模式都適用：Material 主題色 → fallback 文字色 */
+  color: var(--md-primary-fg-color, currentColor);
+}
+
+/* hover：改成 accent */
+.tts-btn:hover{
+  color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
+  filter: none; /* 避免暗色模式 brightness 反效果 */
+}
+
+/* 播放中狀態：用 accent 或降低透明度（二選一） */
+.tts-btn[aria-pressed="true"]{
+  color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
+  /* 或你想淡一點就改用：opacity: 0.75; */
+}
+
+/* 鍵盤焦點可視化 */
+.tts-btn:focus-visible{
+  outline: 2px solid var(--md-accent-fg-color, currentColor);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* ===== 用 CSS 畫圖示（用 currentColor 上色） ===== */
+.tts-btn[data-state="play"]::before{
+  content: "";
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 9px 0 9px 14px;
+  border-color: transparent transparent transparent currentColor;
+  transform: translateX(1px);
+}
+
+.tts-btn[data-state="stop"]::before{
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  border-radius: 3px;
+}
+
+/* Voice bar：也跟著亮/暗模式 */
+#tts-topbar{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  margin: 12px 0 16px;
+
+  /* ✅ Material 有專用變數就用，沒有就 fallback */
+  border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.12));
+  border-radius: 12px;
+  background: var(--md-default-bg-color, rgba(255,255,255,.95));
+  font-size: 14px;
+}
+
+#tts-voice-picker{
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.2));
+  background: transparent; /* ✅ 暗色模式不要白底 */
+  color: inherit;
+  font: inherit;
+  max-width: min(720px, 85vw);
+}
+
+#tts-voice-hint{
+  color: var(--md-default-fg-color--light, #777);
+  font-size: 12px;
+}
+
+
+/* ✅ 可改：手機再大一點（可刪除整段） */
+@media (max-width: 600px){
+  .tts-btn{
+    width: 52px;             /* ✅ 可改 */
+    height: 52px;            /* ✅ 可改 */
+  }
+  .tts-btn[data-state="play"]::before{
+    border-width: 10px 0 10px 16px;     /* ✅ 可改：手機三角形更大 */
+  }
+  .tts-btn[data-state="stop"]::before{
+    width: 18px;                         /* ✅ 可改 */
+    height: 18px;                        /* ✅ 可改 */
+  }
+}
+</style>
+
 <script>
 (function () {
   let currentBtn = null;
-  let currentUtterance = null;
+
+  /* =========================
+     你可以改的地方：預設語音
+     ========================= */
+  const DEFAULT_LANG = "en-US";                      // ✅ 可改：例如 "en-GB"
+  const DEFAULT_NAME_INCLUDES = "Google US English"; // ✅ 可改：例如 "Google UK English"
+  /* ========================= */
 
   function supported() {
     return ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window);
   }
 
-  // 建立語音選單（只建一次）
-  function ensureVoicePicker() {
-    if (document.getElementById("tts-voice-picker")) return;
+  function stop() {
+    try { speechSynthesis.cancel(); } catch (_) {}
+    if (currentBtn) {
+      // ✅ 不用文字，改用狀態切換
+      currentBtn.setAttribute("data-state", "play");
+      currentBtn.setAttribute("aria-pressed", "false");
+      currentBtn = null;
+    }
+  }
 
-    const host = document.createElement("div");
-    host.style.margin = "8px 0 14px";
-    host.style.display = "flex";
-    host.style.alignItems = "center";
-    host.style.gap = "10px";
-    host.style.flexWrap = "wrap";
+  function getMainContainer() {
+    return (
+      document.querySelector(".md-content .md-content__inner") ||
+      document.querySelector("main") ||
+      document.body
+    );
+  }
+
+  function ensureTopBar() {
+    let bar = document.getElementById("tts-topbar");
+    if (bar) return bar;
+
+    bar = document.createElement("div");
+    bar.id = "tts-topbar";
 
     const label = document.createElement("span");
     label.textContent = "Voice:";
-    label.style.fontSize = "14px";
     label.style.color = "#555";
 
     const sel = document.createElement("select");
     sel.id = "tts-voice-picker";
-    sel.style.padding = "6px 8px";
-    sel.style.borderRadius = "8px";
-    sel.style.border = "1px solid rgba(0,0,0,.2)";
-    sel.style.font = "inherit";
 
     const hint = document.createElement("span");
     hint.id = "tts-voice-hint";
-    hint.style.fontSize = "12px";
-    hint.style.color = "#777";
 
-    host.appendChild(label);
-    host.appendChild(sel);
-    host.appendChild(hint);
+    bar.appendChild(label);
+    bar.appendChild(sel);
+    bar.appendChild(hint);
 
-    // 插在第一個 .tts 前面
-    const first = document.querySelector(".tts");
-    if (first && first.parentElement) {
-      first.parentElement.insertBefore(host, first);
+    // ✅ 插入位置：第一個 H1 後面
+    const container = getMainContainer();
+    const h1 = container.querySelector("h1");
+    if (h1 && h1.parentNode) {
+      h1.insertAdjacentElement("afterend", bar);
     } else {
-      document.body.insertBefore(host, document.body.firstChild);
+      container.insertBefore(bar, container.firstChild);
     }
 
-    function populateVoices() {
-      const voices = speechSynthesis.getVoices() || [];
-      sel.innerHTML = "";
+    return bar;
+  }
 
-      // 你可以改成只顯示特定語系（例如只顯示 en-*）
-      // const filtered = voices.filter(v => /^en[-_]/i.test(v.lang));
-      const filtered = voices;
+  function populateVoicesAndSelectDefault() {
+    const sel = document.getElementById("tts-voice-picker");
+    const hint = document.getElementById("tts-voice-hint");
+    if (!sel) return;
 
-      filtered.forEach((v, idx) => {
-        const opt = document.createElement("option");
-        opt.value = String(idx);
-        opt.textContent = `${v.lang} — ${v.name}${v.localService ? "" : " (cloud)"}`;
-        opt.dataset.lang = v.lang;
-        opt.dataset.name = v.name;
-        sel.appendChild(opt);
-      });
+    const voices = speechSynthesis.getVoices() || [];
+    sel.innerHTML = "";
 
-      hint.textContent = filtered.length ? `Detected ${filtered.length} voices on this device.` : "No voices found.";
-    }
+    voices.forEach((v, idx) => {
+      const opt = document.createElement("option");
+      opt.value = String(idx);
+      opt.textContent = `${v.lang} — ${v.name}${v.localService ? "" : " (cloud)"}`;
+      sel.appendChild(opt);
+    });
 
-    // voices 可能延遲載入
-    populateVoices();
-    speechSynthesis.onvoiceschanged = populateVoices;
+    hint.textContent = voices.length ? `Detected ${voices.length} voices.` : "No voices found.";
+    if (!voices.length) return;
+
+    const needle = DEFAULT_NAME_INCLUDES.toLowerCase();
+
+    let idx = voices.findIndex(v =>
+      (v.lang || "").toLowerCase() === DEFAULT_LANG.toLowerCase() &&
+      (v.name || "").toLowerCase().includes(needle)
+    );
+    if (idx < 0) idx = voices.findIndex(v => (v.name || "").toLowerCase().includes(needle));
+    if (idx < 0) idx = voices.findIndex(v => (v.lang || "").toLowerCase() === DEFAULT_LANG.toLowerCase());
+    if (idx < 0) idx = voices.findIndex(v => (v.lang || "").toLowerCase().startsWith("en"));
+    if (idx < 0) idx = 0;
+
+    sel.value = String(idx);
   }
 
   function getSelectedVoice() {
@@ -4540,23 +4742,13 @@ is now available!
     return Number.isFinite(idx) ? voices[idx] : null;
   }
 
-  function stop() {
-    try { speechSynthesis.cancel(); } catch (_) {}
-    if (currentBtn) {
-      currentBtn.textContent = "▶";
-      currentBtn.setAttribute("aria-pressed", "false");
-      currentBtn = null;
-    }
-    currentUtterance = null;
-  }
-
-  function speak(text, lang, btn) {
+  function speak(text, preferredLang, btn) {
     if (!supported()) return;
 
     const t = (text || "").trim();
     if (!t) return;
 
-    // 同顆再按一次：停止
+    // 同顆再按：停止
     if (currentBtn === btn) {
       stop();
       return;
@@ -4565,58 +4757,72 @@ is now available!
     stop();
 
     const u = new SpeechSynthesisUtterance(t);
-    u.lang = lang || "en-US";
-
     const v = getSelectedVoice();
+
     if (v) {
       u.voice = v;
-      // 若你希望語音選了就強制使用其 lang，可打開下一行：
-      // u.lang = v.lang;
+      u.lang = v.lang || preferredLang || DEFAULT_LANG;
+    } else {
+      u.lang = preferredLang || DEFAULT_LANG;
     }
 
-    btn.textContent = "■";
+    /* =========================
+       你可以改的地方：語速/音高
+       ========================= */
+    u.rate = 1.0;   // ✅ 可改：0.85 慢速，1.0 正常，1.1~1.2 加速
+    u.pitch = 1.0;  // ✅ 可改
+    /* ========================= */
+
+    // ✅ 不用文字，改用狀態切換
+    btn.setAttribute("data-state", "stop");
     btn.setAttribute("aria-pressed", "true");
     currentBtn = btn;
-    currentUtterance = u;
 
     u.onend = stop;
     u.onerror = stop;
 
-    // 觸發 voice 載入
     speechSynthesis.getVoices();
     speechSynthesis.speak(u);
   }
 
-  function init() {
-    if (!supported()) return;
-
-    ensureVoicePicker();
-
+  function attachButtons() {
     document.querySelectorAll(".tts").forEach(span => {
-      // 避免重複加按鈕
       if (span.querySelector(":scope > button.tts-btn")) return;
 
-      // 關鍵：先把「純句子」保存起來，避免把按鈕文字一起唸
-      const pureText = (span.textContent || "").trim();
-      span.setAttribute("data-tts", pureText);
+      // ✅ 保存純句子，避免把按鈕一起唸
+      const pure = (span.getAttribute("data-tts") || span.textContent || "").trim();
+      span.setAttribute("data-tts", pure);
 
       const btn = document.createElement("button");
       btn.className = "tts-btn";
       btn.type = "button";
-      btn.textContent = "▶";
-      btn.setAttribute("aria-pressed", "false");
-      btn.setAttribute("aria-label", "Play");
 
-      const lang = span.getAttribute("data-lang") || "en-US";
+      // ✅ 初始狀態：播放（由 CSS 畫三角形）
+      btn.setAttribute("data-state", "play");
+      btn.setAttribute("aria-pressed", "false");
+      btn.setAttribute("aria-label", "Play/Stop");
+
+      const lang = span.getAttribute("data-lang") || DEFAULT_LANG;
       btn.onclick = () => speak(span.getAttribute("data-tts"), lang, btn);
 
       span.appendChild(btn);
     });
   }
 
-  // 若是 Material instant navigation，snippets 注入的 script 有時不會重新執行；
-  // 但你目前用 snippets 時，通常仍會在初次載入時執行。
-  // 保險：DOMContentLoaded 再跑一次（不會重複加按鈕）
+  function init() {
+    if (!supported()) return;
+    ensureTopBar();
+    populateVoicesAndSelectDefault();
+    attachButtons();
+  }
+
+  if ("speechSynthesis" in window) {
+    speechSynthesis.onvoiceschanged = () => {
+      ensureTopBar();
+      populateVoicesAndSelectDefault();
+    };
+  }
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
@@ -4625,28 +4831,36 @@ is now available!
 })();
 </script>
 
-<h2 id="q2"><strong>Q2.</strong><a class="headerlink" href="#q2" title="Permanent link"></a></h2>
-<!-- 
-A) Several fishing boats are docked.
-
-B) A boat is receiving maintenance.
-
-C) The boats are being rocked by a storm.
-
-D) The dock is empty of any boats. 
--->
-
-<p>A) <span class="tts">Several fishing boats are docked.</span><br />
-B) <span class="tts">A boat is receiving maintenance.</span><br />
-C) <span class="tts">The boats are being rocked by a storm.</span><br />
-D) <span class="tts">The dock is empty of any boats.</span></p>
+<h2 id="q2">Q2<a class="headerlink" href="#q2" title="Permanent link"></a></h2>
+<p><span class="tts">A) Several fishing boats are docked.</p>
+<p><span class="tts">B) A boat is receiving maintenance.</p>
+<p><span class="tts">C) The boats are being rocked by a storm.</p>
+<p><span class="tts">D) The dock is empty of any boats. </p>
 <p><img alt="alt text" src="image-1.png" /></p>
-<h2 id="q4"><strong>Q4.</strong><a class="headerlink" href="#q4" title="Permanent link"></a></h2>
-<p>A) Several pedestrians are crossing the street.</p>
-<p>B) Traffic congestion is blocking the intersection.</p>
-<p>C) A sign in the road  is being removed.</p>
-<p>D) There are many traffic lights on the street.</p>
+<h2 id="q4">Q4<a class="headerlink" href="#q4" title="Permanent link"></a></h2>
+<p><span class="tts">A) Several pedestrians are crossing the street.</p>
+<p><span class="tts">B) Traffic congestion is blocking the intersection.</p>
+<p><span class="tts">C) A sign in the road is being removed.</p>
+<p><span class="tts">D) There are many traffic lights on the street.</p>
 <p><img alt="alt text" src="image-2.png" /></p>
+<h2 id="q5">Q5<a class="headerlink" href="#q5" title="Permanent link"></a></h2>
+<p><span class="tts">A) Passengers are boarding an airplane.</p>
+<p><span class="tts">B) The boarding gate has not opened yet.</p>
+<p><span class="tts">C) People are checking in their luggage.</p>
+<p><span class="tts">D) People are shopping for souvenirs. </p>
+<p><img alt="alt text" src="image-3.png" /></p>
+<h2 id="q8">Q8.<a class="headerlink" href="#q8" title="Permanent link"></a></h2>
+<p><span class="tts">Where should we go to check in our luggage?</p>
+<p><span class="tts">A) The counter is located right over there.</p>
+<p><span class="tts">B) Your luggage has already been loaded.</p>
+<p><span class="tts">C) You check it any time you want to.</p>
+<p><img alt="alt text" src="image-6.png" /></p>
+<h2 id="q10">Q10.<a class="headerlink" href="#q10" title="Permanent link"></a></h2>
+<p><span class="tts">What time does the shuttle depart from the hotel?</p>
+<p><span class="tts">A) The time has not yet come.</p>
+<p><span class="tts">B) Every hour, on the hour.</p>
+<p><span class="tts">C) The shuttle bus will arrive shortly.</p>
+<p><img alt="alt text" src="image-5.png" /></p>
 
 
 
@@ -4768,8 +4982,6 @@ D) <span class="tts">The dock is empty of any boats.</span></p>
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
         <script src="../assets/pymdownx-extras/extra-loader-iLQ-keay.js"></script>
-      
-        <script src="../theme/stylesheets/tts-inline.css"></script>
       
     
   </body>
