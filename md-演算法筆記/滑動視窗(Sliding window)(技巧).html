@@ -4626,7 +4626,7 @@ is now available!
 
 <span class="w">    </span><span class="n">multiset</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="n">s</span><span class="p">;</span>
 
-<span class="w">    </span>
+
 
 <span class="w">    </span><span class="c1">// 初始化前 m 個元素</span>
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -4639,7 +4639,7 @@ is now available!
 
 <span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
 <span class="w">        </span><span class="n">s</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="o">=</span><span class="n">s</span><span class="p">.</span><span class="n">lower_bound</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">m</span><span class="p">]);</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="o">=</span><span class="n">s</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">m</span><span class="p">]);</span>
 <span class="w">        </span><span class="n">s</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
 
 <span class="w">        </span><span class="n">ans</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="n">abs</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="o">-*</span><span class="n">s</span><span class="p">.</span><span class="n">rbegin</span><span class="p">()));</span>
@@ -4706,121 +4706,51 @@ is now available!
 </code></pre></div>
 <div class="code-footer"><label class="expand" for="__collapse2" tabindex="0" title="expand"></label><label class="collapse" for="__collapse2" tabindex="0" title="collapse"></label></div>
 </div>
-<div class="collapse-code"><input checked="checked" id="__collapse3" name="__collapse3" type="checkbox" /><div class="highlight"><span class="filename">deque：自己寫，錯誤版</span><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<div class="collapse-code"><input checked="checked" id="__collapse3" name="__collapse3" type="checkbox" /><div class="highlight"><span class="filename">deque：自己寫(複雜度插度多，但實際上較慢)</span><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 
+<span class="k">struct</span><span class="w"> </span><span class="nc">st</span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">;</span><span class="w"> </span><span class="c1">//value,index</span>
+<span class="p">};</span>
+
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">ans</span><span class="o">=</span><span class="n">INT_MIN</span><span class="p">;</span>
 <span class="w">    </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">n</span><span class="o">&gt;&gt;</span><span class="n">m</span><span class="p">;</span>
-<span class="w">    </span>
-<span class="w">    </span><span class="n">deque</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="n">mindq</span><span class="p">;</span>
-<span class="w">    </span><span class="n">deque</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="n">maxdq</span><span class="p">;</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ans</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">deque</span><span class="o">&lt;</span><span class="n">st</span><span class="o">&gt;</span><span class="n">dqma</span><span class="p">;</span>
+<span class="w">    </span><span class="n">deque</span><span class="o">&lt;</span><span class="n">st</span><span class="o">&gt;</span><span class="n">dqmi</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
 <span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
 <span class="w">        </span><span class="n">cin</span><span class="o">&gt;&gt;</span><span class="n">x</span><span class="p">;</span>
 
-<span class="w">        </span><span class="n">mindq</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
-<span class="w">        </span><span class="n">maxdq</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
-
-<span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">mindq</span><span class="p">.</span><span class="n">front</span><span class="p">()</span><span class="o">&gt;</span><span class="n">x</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">mindq</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="n">m</span><span class="p">){</span>
-<span class="w">            </span><span class="n">mindq</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">dqma</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">i</span><span class="o">-</span><span class="n">dqma</span><span class="p">.</span><span class="n">front</span><span class="p">().</span><span class="n">y</span><span class="o">&gt;=</span><span class="n">m</span><span class="p">){</span>
+<span class="w">            </span><span class="n">dqma</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
 <span class="w">        </span><span class="p">}</span>
-<span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="n">maxdq</span><span class="p">.</span><span class="n">front</span><span class="p">()</span><span class="o">&lt;</span><span class="n">x</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">maxdq</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&gt;</span><span class="n">m</span><span class="p">){</span>
-<span class="w">            </span><span class="n">maxdq</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+<span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">dqma</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">dqma</span><span class="p">.</span><span class="n">back</span><span class="p">().</span><span class="n">x</span><span class="o">&lt;</span><span class="n">x</span><span class="p">){</span>
+<span class="w">            </span><span class="n">dqma</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
 <span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">dqma</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">x</span><span class="p">,</span><span class="n">i</span><span class="p">});</span>
 
-<span class="w">        </span><span class="n">ans</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">maxdq</span><span class="p">.</span><span class="n">front</span><span class="p">()</span><span class="o">-</span><span class="n">mindq</span><span class="p">.</span><span class="n">front</span><span class="p">(),</span><span class="n">ans</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">dqmi</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">i</span><span class="o">-</span><span class="n">dqmi</span><span class="p">.</span><span class="n">front</span><span class="p">().</span><span class="n">y</span><span class="o">&gt;=</span><span class="n">m</span><span class="p">){</span>
+<span class="w">            </span><span class="n">dqmi</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">dqmi</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">dqmi</span><span class="p">.</span><span class="n">back</span><span class="p">().</span><span class="n">x</span><span class="o">&gt;</span><span class="n">x</span><span class="p">){</span>
+<span class="w">            </span><span class="n">dqmi</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">dqmi</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">x</span><span class="p">,</span><span class="n">i</span><span class="p">});</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="n">ans</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="n">dqma</span><span class="p">.</span><span class="n">front</span><span class="p">().</span><span class="n">x</span><span class="o">-</span><span class="n">dqmi</span><span class="p">.</span><span class="n">front</span><span class="p">().</span><span class="n">x</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span>
+
 <span class="w">    </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ans</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 <div class="code-footer"><label class="expand" for="__collapse3" tabindex="0" title="expand"></label><label class="collapse" for="__collapse3" tabindex="0" title="collapse"></label></div>
 </div>
-<details>
-<summary>錯誤原因</summary>
-<p>好的，我們用題目提供的範例來看看您的程式碼可能在哪一步出現問題。<br />
-範例輸入：<br />
-N = 9, L = 4<br />
-序列 (seq): 1 4 3 6 9 8 5 7 1<br />
-我們一步步追蹤您的程式碼（為了簡化，我們假設迴圈是 for(int i=0; i<n; ++i)，並且 cin>&gt;x 讀取的是序列中的第 i 個元素，m 對應 L）：<br />
-\</p>
-<p>您的 deque 維護邏輯 (以 mindq 為例):<br />
-* mindq.push_back(x);<br />
-* while(!mindq.empty() &amp;&amp; (mindq.front() &gt; x || mindq.size() &gt; m)) { mindq.pop_front(); }<br />
-追蹤：<br />
-(ans 初始為 0)</p>
-<ul>
-<li>i=0, x=1:</li>
-<li>mindq.push_back(1) -&gt; mindq = [1]</li>
-<li>while 條件: front(1)&gt;x(1) (F), size(1)&gt;L(4) (F). mindq 不變: [1]</li>
-<li>maxdq (類似): [1]</li>
-<li>
-<p>ans = max(0, 1-1) = 0</p>
-</li>
-<li>
-<p>i=1, x=4:</p>
-</li>
-<li>mindq.push_back(4) -&gt; mindq = [1, 4]</li>
-<li>while 條件: front(1)&gt;x(4) (F), size(2)&gt;L(4) (F). mindq 不變: [1, 4]</li>
-<li>maxdq.push_back(4) -&gt; [1,4]. while(front(1)<x(4) (T)) -> pop_front(). maxdq = [4]</li>
-<li>
-<p>ans = max(0, maxdq.front(4) - mindq.front(1)) = 3</p>
-</li>
-<li>
-<p>i=2, x=3:</p>
-</li>
-<li>mindq.push_back(3) -&gt; mindq = [1, 4, 3]</li>
-<li>while 條件: front(1)&gt;x(3) (F), size(3)&gt;L(4) (F). mindq 不變: [1, 4, 3]</li>
-<li>maxdq.push_back(3) -&gt; [4,3]. while(front(4)<x(3) (F), size(2)>L(4) (F)). maxdq=[4,3]</li>
-<li>
-<p>ans = max(3, maxdq.front(4) - mindq.front(1)) = 3</p>
-</li>
-<li>
-<p>i=3, x=6: (當前窗口 [1, 4, 3, 6]. 實際 Min=1, Max=6. Diff=5)</p>
-</li>
-<li>mindq.push_back(6) -&gt; mindq = [1, 4, 3, 6]</li>
-<li>while 條件: front(1)&gt;x(6) (F), size(4)&gt;L(4) (F, size==L). mindq 不變: [1, 4, 3, 6]<ul>
-<li>此時 mindq.front() 是 1 (正確)</li>
-</ul>
-</li>
-<li>maxdq.push_back(6) -&gt; [4,3,6]. while(front(4)<x(6) (T)) -> pop. maxdq=[3,6]. while(front(3)<x(6) (T)) -> pop. maxdq=[6]<ul>
-<li>此時 maxdq.front() 是 6 (正確)</li>
-</ul>
-</li>
-<li>
-<p>ans = max(3, 6-1) = 5. (此窗口計算正確)</p>
-</li>
-<li>
-<p>i=4, x=9: (當前窗口 [4, 3, 6, 9]. 實際 Min=3, Max=9. Diff=6)</p>
-</li>
-<li>mindq.push_back(9) -&gt; mindq = [1, 4, 3, 6, 9]</li>
-<li>while 條件 (x=9, L=4):<ul>
-<li>mindq = [1, 4, 3, 6, 9]. front(1)&gt;x(9) (F). size(5)&gt;L(4) (T). mindq.pop_front(). mindq 變為 [4, 3, 6, 9].</li>
-<li>mindq = [4, 3, 6, 9]. front(4)&gt;x(9) (F). size(4)&gt;L(4) (F, size==L). while 結束.</li>
-</ul>
-</li>
-<li>錯誤點：此時 mindq 是 [4, 3, 6, 9]. 您的程式碼會認為 mindq.front() 即 4 是當前窗口 [4, 3, 6, 9] 的最小值。但實際的最小值是 3。</li>
-<li>maxdq.push_back(9) -&gt; [6,9]. while(front(6)<x(9) (T)) -> pop. maxdq=[9].<ul>
-<li>此時 maxdq.front() 是 9 (正確)</li>
-</ul>
-</li>
-<li>您的程式碼計算差值: maxdq.front(9) - mindq.front(4) = 5.</li>
-<li>ans = max(5, 5) = 5.</li>
-<li>問題影響： 這個窗口 [4, 3, 6, 9] 的正確差值是 9 - 3 = 6。但因為您的 mindq 維護邏輯使得 mindq.front() 變成了 4，所以計算出的差值是 5。如果 6 是全局最大的差值，您的程式碼就會錯過它。</li>
-</ul>
-<p>為什麼 mindq.front() 會出錯？<br />
-在處理 x=9 時：<br />
-* 舊的 mindq 是 [1, 4, 3, 6]。元素 1 來自序列的第一個元素，它實際上已經滑出了當前窗口 [4, 3, 6, 9]。<br />
-* mindq.push_back(9) 使 mindq 變成 [1, 4, 3, 6, 9]。<br />
-* mindq.size() (5) &gt; L (4) 條件為真，所以 mindq.pop_front()，將 1 彈出。mindq 變成 [4, 3, 6, 9]。<br />
-* 此時，隊首是 4。接下來 mindq.front() (4) &gt; x (9) 為假，mindq.size() (4) &gt; L (4) 為假，while 迴圈結束。<br />
-* 所以，mindq.front() 停留在了 4。<br />
-您的 deque 維護邏輯並不能保證 front() 始終是當前長度為 L 的窗口內的實際最小值（或最大值）。size() &gt; L 的判斷雖然移除了最左邊的元素，但剩下的 deque 並沒有通過正確的單調性維護來確保新的 front() 是新的最小值。同時，front() &gt; x (或 front() &lt; x) 的條件是試圖讓 front() 變成 x（如果 x 更有利），但這也不是標準的單調隊列維護方式。<br />
-在這個例子中，雖然最終答案碰巧是 7 (來自後面的窗口 [8,5,7,1]，您的程式碼對這個窗口計算正確)，但中間步驟 i=4 時，您的程式碼對窗口 [4,3,6,9] 的最小值判斷是錯誤的，從而計算了較小的區段差 (5 而非 6)。如果序列設計得巧妙一些，這個中間的錯誤就可能導致最終答案錯誤。</p>
-</details>
 
 
 
