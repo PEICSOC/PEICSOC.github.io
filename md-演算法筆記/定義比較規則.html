@@ -4412,35 +4412,85 @@ is now available!
 
 
 <h1 id="定義比較規則">定義比較規則<a class="headerlink" href="#定義比較規則" title="Permanent link"></a></h1>
-<blockquote>
-<p>先不細談<br />
-定義st與st之間如何互相比較</p>
-</blockquote>
-<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
+<p>定義st與st之間如何互相比較<br />
+最簡單寫法是：<br />
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos=" 1 "></span><span class="k">struct</span><span class="w"> </span><span class="nc">st</span><span class="p">{</span>
+<span class="hll"><span class="linenos" data-linenos=" 2 "></span><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+</span><span class="linenos" data-linenos=" 3 "></span><span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="linenos" data-linenos=" 4 "></span><span class="w">    </span>
+<span class="linenos" data-linenos=" 5 "></span><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="n">st</span><span class="w"> </span><span class="n">other</span><span class="p">){</span>
+<span class="linenos" data-linenos=" 6 "></span><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">)</span><span class="k">return</span><span class="w"> </span><span class="n">y</span><span class="o">&lt;</span><span class="n">other</span><span class="p">.</span><span class="n">y</span><span class="p">;</span><span class="w">  </span><span class="c1">//這裡的x其實就是第2行的int x</span>
+<span class="linenos" data-linenos=" 7 "></span><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="o">&lt;</span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="linenos" data-linenos=" 8 "></span><span class="w">    </span><span class="p">}</span>
+<span class="linenos" data-linenos=" 9 "></span>
+<span class="linenos" data-linenos="10 "></span><span class="p">};</span>
+</code></pre></div></p>
+<p>這個的函數名稱就叫做"operator&lt;"<br />
+因為<code>st other</code>要避免產生其他新的變數，改成取別名<code>st&amp; other</code>。<br />
+因為要抱持好的編寫習慣，加上const，變成：</p>
+<div class="highlight"><pre><span></span><code><span class="linenos" data-linenos=" 1 "></span><span class="k">struct</span><span class="w"> </span><span class="nc">st</span><span class="p">{</span>
+<span class="hll"><span class="linenos" data-linenos=" 2 "></span><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+</span><span class="linenos" data-linenos=" 3 "></span><span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="linenos" data-linenos=" 4 "></span><span class="w">    </span>
+<span class="linenos" data-linenos=" 5 "></span><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">st</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="k">const</span><span class="p">{</span>
+<span class="linenos" data-linenos=" 6 "></span><span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">)</span><span class="k">return</span><span class="w"> </span><span class="n">y</span><span class="o">&lt;</span><span class="n">other</span><span class="p">.</span><span class="n">y</span><span class="p">;</span><span class="w">  </span><span class="c1">//這裡的x其實就是第2行的int x</span>
+<span class="linenos" data-linenos=" 7 "></span><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="o">&lt;</span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="linenos" data-linenos=" 8 "></span><span class="w">    </span><span class="p">}</span>
+<span class="linenos" data-linenos=" 9 "></span>
+<span class="linenos" data-linenos="10 "></span><span class="p">};</span>
+</code></pre></div>
+<p>可以把other當作cmp的b(bool cmp(st a,st b);)所以放右邊，像是下面程式碼。</p>
+<p>但是其實一般來說只需要定義&lt;就好了，因為<code>std::sort</code> / <code>set</code> / <code>map</code> / <code>priority_queue</code> / <code>lower_bound</code> 都只需要比較小於就好。</p>
+<p>題外話：lower_bound的等價是!(a &lt; b) &amp;&amp; !(b &lt; a)</p>
+<p>所以如果只寫 <code>bool operator&lt;(const st&amp; other) const { return x &lt; other.x; }</code>時<code>{x=5, y="a"}</code> 與 <code>{x=5, y="b"}</code> 在 <code>set</code> 看來是「等價」的</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-<span class="cp">#define nn &quot;\n&quot;;</span>
+<span class="cp">#define nn &quot;\n&quot;</span>
+
 
 <span class="k">struct</span><span class="w"> </span><span class="nc">st</span><span class="p">{</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">;</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">st</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">st</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="k">const</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">)</span><span class="k">return</span><span class="w"> </span><span class="n">y</span><span class="o">&lt;</span><span class="n">other</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="o">&lt;</span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">st</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">st</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="k">const</span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">)</span><span class="k">return</span><span class="w"> </span><span class="n">y</span><span class="o">&gt;</span><span class="n">other</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="o">&gt;</span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">st</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
-<span class="w">    </span><span class="p">}</span><span class="w">   </span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">st</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="k">const</span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="o">==</span><span class="n">other</span><span class="p">.</span><span class="n">x</span><span class="o">&amp;&amp;</span><span class="n">y</span><span class="o">==</span><span class="n">other</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
 <span class="p">};</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
-<span class="w">    </span><span class="n">st</span><span class="w"> </span><span class="n">a</span><span class="o">=</span><span class="p">{</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">};</span>
-<span class="w">    </span><span class="n">st</span><span class="w"> </span><span class="n">b</span><span class="o">=</span><span class="p">{</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">};</span>
 
-<span class="w">    </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">a</span><span class="o">==</span><span class="n">b</span><span class="p">);</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">st</span><span class="o">&gt;</span><span class="n">v</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;4444&quot;</span><span class="p">});</span>
+<span class="w">    </span><span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="mi">3</span><span class="p">,</span><span class="s">&quot;66&quot;</span><span class="p">});</span>
+<span class="w">    </span><span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;99&quot;</span><span class="p">});</span>
+<span class="w">    </span><span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;2222&quot;</span><span class="p">});</span>
+<span class="w">    </span><span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;111&quot;</span><span class="p">});</span>
+
+
+<span class="w">    </span><span class="n">sort</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">5</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="o">&lt;&lt;</span><span class="s">&quot; &quot;</span><span class="o">&lt;&lt;</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="o">&lt;&lt;</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
 <span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>1 99
+2 44
+3 66
+4 22
+5 11
 </code></pre></div>
 
 
