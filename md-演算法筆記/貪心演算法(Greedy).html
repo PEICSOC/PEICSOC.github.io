@@ -4661,6 +4661,8 @@ is now available!
 
 
 
+<!-- GPT：https://chatgpt.com/c/695011c2-bbdc-8321-a068-625e3df56c68 -->
+
 <h1 id="貪心演算法greedy">貪心演算法(Greedy)<a class="headerlink" href="#貪心演算法greedy" title="Permanent link"></a></h1>
 <blockquote>
 <p>貪心法按照最好情況選擇</p>
@@ -4700,15 +4702,20 @@ is now available!
 範例輸入： 3 21 50 123    <br />
 範例結果： 3 1 7    <br />
 說明：21 = 10*2 + 1, 50 = 50*1, 123 = 50*2 + 10*2 + 1*3。     </p>
-<blockquote>
-<p>對於這種換錢問題，想要證明使用較小代幣換錢是最好的方法，  <br />
-該如何證明？假設 <span class="arithmatex">\(v[n]\)</span> 為每種代幣（由小到大），<span class="arithmatex">\(v[i-1] \times 2 \leq v[i]\)</span> 即可。    </p>
-<p>假設有 <span class="arithmatex">\(a, b, c\)</span>（<span class="arithmatex">\(a &lt; b &lt; c\)</span>，且 <span class="arithmatex">\(2b &gt; c\)</span>），<span class="arithmatex">\(b\)</span> 就是上面的 <span class="arithmatex">\(v[i-1]\)</span>，  <br />
+<div class="i">
+<p>對於這種換錢問題，想要證明使用較小代幣換錢是最好的方法，其實有一個公式：假設 <span class="arithmatex">\(v\)</span> 為遞增序列，若滿足 <span class="arithmatex">\(v[i-1] \times 2 \leq v[i]\)</span>  ，以較大面額的代幣先換就能夠換到最少代幣。</p>
+<p>該如何證明？</p>
+<p>假設 <span class="arithmatex">\(v[n]\)</span> 為每種代幣（由小到大），<span class="arithmatex">\(v[i-1] \times 2 \leq v[i]\)</span> 。  <br />
+假設有 <span class="arithmatex">\(a, b, c\)</span>（<span class="arithmatex">\(a &lt; b &lt; c\)</span>，且 <span class="arithmatex">\(2b &gt; c\)</span>），<span class="arithmatex">\(b\)</span> 就是上面的 <span class="arithmatex">\(v[i-1]\)</span>，  <br />
 <span class="arithmatex">\(c\)</span> 就是上面的 <span class="arithmatex">\(v[i]\)</span>。假設有 <span class="arithmatex">\(x\)</span> 元，<span class="arithmatex">\(x = 2b\)</span>，使用兩個硬幣。  <br />
 因為 <span class="arithmatex">\(2b &gt; c\)</span>，所以如果使用 <span class="arithmatex">\(c\)</span> 的話，第二個硬幣一定不是 <span class="arithmatex">\(b\)</span>，  <br />
 又因剩餘的比 <span class="arithmatex">\(b\)</span> 小，會使用到 <span class="arithmatex">\(a\)</span> 或是比 <span class="arithmatex">\(a\)</span> 小的硬幣，  <br />
 總使用硬幣數量一定會大於等於兩枚硬幣。</p>
-</blockquote>
+<p>因此可知，在金額為 <span class="arithmatex">\(2b\)</span> 的情況下，使用一枚 <span class="arithmatex">\(c\)</span> 再搭配較小面額的硬幣，並不會比直接使用兩枚 <span class="arithmatex">\(b\)</span> 來得更省硬幣數。換言之，兩枚 <span class="arithmatex">\(b\)</span> 在硬幣數量上至少與一枚 <span class="arithmatex">\(c\)</span> 一樣好，甚至更好。</p>
+<p>而這正是條件 <span class="arithmatex">\(2b&gt;c\)</span>（亦即 <span class="arithmatex">\(v[i]\le 2v[i-1]\)</span>）的意義所在：<br />
+它確保了「大面額 <span class="arithmatex">\(c\)</span> 並沒有強到可以完全取代兩枚上一個面額 <span class="arithmatex">\(b\)</span>」，因此在最佳解中，我們不會因為使用 <span class="arithmatex">\(c\)</span> 而減少所需的硬幣數。</p>
+<p>也就是說，只要存在兩枚 <span class="arithmatex">\(b\)</span> 的情況，就不需要考慮改用一枚 <span class="arithmatex">\(c\)</span> 來取代，因為這樣做不但沒有好處，反而可能增加硬幣數。由此可知，在換錢時，優先使用較小面額（或至少不急著使用較大面額）是合理且安全的選擇。</p>
+</div>
 <p><img alt="alt text" src="../images/%E8%B2%AA%E5%BF%83%E6%BC%94%E7%AE%97%E6%B3%95%28Greedy%29/image-28.png" /></p>
 <div class="collapse-code"><input checked="checked" id="__collapse0" name="__collapse0" type="checkbox" /><div class="highlight"><span class="filename">code</span><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
@@ -4745,15 +4752,22 @@ Time limit: 1 秒 <br />
 8 3 5 0 0     </p>
 <p>範例結果： <br />
 3    </p>
-<blockquote>
-<p>遇到這個問題我們當然要找個方法排配對誰和誰打誰。  <br />
-最直覺的方法是，從最小的開始找出比較小的當作對手。    </p>
-<p>但為何這個方法正確呢？    </p>
-<p>我們假設 <span class="arithmatex">\(a &lt; b\)</span>、<span class="arithmatex">\(y &lt; z\)</span>；且 <span class="arithmatex">\(b &lt; z\)</span>。  <br />
-假設「最佳解中有一個解是 <span class="arithmatex">\(a\)</span> 與 <span class="arithmatex">\(b\)</span> 配對」。    </p>
-<p>若 <span class="arithmatex">\(a\)</span> 與 <span class="arithmatex">\(y\)</span> 交換，根據上述關係我們可以知道 <span class="arithmatex">\(a &lt; z\)</span>（因為 <span class="arithmatex">\(a &lt; b\)</span>、<span class="arithmatex">\(b &lt; z\)</span>），  <br />
-但無法得知 <span class="arithmatex">\(y &lt; b\)</span>，所以交換後無法增加勝場數，甚至可能減少。</p>
-</blockquote>
+<div class="i">
+<p>直覺想法：</p>
+<p>・如果我們想增加勝場，就希望我方用「能贏」的戰力去打對方最弱的對手；<br />
+・用太強的打太弱會浪費實力 → 可能讓更難贏的場次變得更難贏，<br />
+・用太弱去打太強又肯定輸。</p>
+<p>所以策略是：</p>
+<ol>
+<li>把對方的戰力排序升序</li>
+<li>把我方的戰力排序升序</li>
+<li>用我方最小能贏的去打對方最小的能被贏的</li>
+</ol>
+<p>假設我方：3,5<br />
+對方：1,4</p>
+<p>如果3選1，5選4 -&gt; 贏兩局<br />
+但如果3選4，5選1 -&gt; 只贏一局</p>
+</div>
 <div class="collapse-code"><input checked="checked" id="__collapse1" name="__collapse1" type="checkbox" /><div class="highlight"><span class="filename">code</span><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 <span class="cp">#define nn &quot;\n&quot;;</span>
@@ -4840,31 +4854,48 @@ Time limit: 1 秒 <br />
 3 1 3 4    </p>
 <p>範例結果： <br />
 23   </p>
-<blockquote>
-<p>這題想法簡單得多      </p>
-<p>有兩種想法：      </p>
-<ol>
-<li>
-<p>假設有三個數字 <span class="arithmatex">\(a, b, c\)</span>    <br />
-若按照順序，三個完成時間為：    <br />
-<span class="arithmatex">\(a, a+b, a+b+c\)</span>    <br />
-前三項合併後為：    <br />
-<span class="arithmatex">\(3a + 2b + c\)</span>    <br />
-由此可知 <span class="arithmatex">\(a\)</span> 的影響最大，<span class="arithmatex">\(a\)</span> 必須為最小者才能夠達成最小時間總和。      </p>
-</li>
-<li>
-<p>或是我們使用「交換前與交換後的關係」去看    <br />
-有 <span class="arithmatex">\(a, b\)</span> 兩數字    <br />
-兩數交換前時間總和：<span class="arithmatex">\(a + a + b\)</span>    <br />
-兩數交換後時間總和：<span class="arithmatex">\(b + b + a\)</span>    <br />
-我們希望交換前小於交換後：    <br />
-[ a + a + b &lt; b + b + a ]    <br />
-<span class="arithmatex">\(\Rightarrow a &lt; b\)</span>    <br />
-所以比較小的數應該在前面。    <br />
-下面程式碼使用的方法是將總時間換成 <span class="arithmatex">\(3a + 2b + c\)</span> 形式進行運算。</p>
-</li>
-</ol>
-</blockquote>
+<div class="i">
+<p>假設有兩種工作的排列方式（只考慮相鄰的兩個工作 <code>a</code>、<code>b</code>）：</p>
+<p>令 <code>S</code> 表示：<strong>在 <code>a</code> 和 <code>b</code> 之前，所有已排工作的「處理時間總和」</strong>（也就是累積已花時間）。</p>
+<hr />
+<p><strong>方式 A：<code>a</code> 在前面，<code>b</code> 在後面</strong></p>
+<ul>
+<li><code>a</code> 的完成時間：<code>S + a</code></li>
+<li><code>b</code> 的完成時間：<code>S + a + b</code></li>
+</ul>
+<p>因此（只看這兩個工作的）完成時間總和為：</p>
+<pre class="arithmatex">\[
+(S+a) + (S+a+b) = 2S + 2a + b
+\]</pre>
+<hr />
+<p><strong>方式 B：<code>b</code> 在前面，<code>a</code> 在後面</strong></p>
+<ul>
+<li><code>b</code> 的完成時間：<code>S + b</code></li>
+<li><code>a</code> 的完成時間：<code>S + b + a</code></li>
+</ul>
+<p>因此完成時間總和為：</p>
+<pre class="arithmatex">\[
+(S+b) + (S+b+a) = 2S + 2b + a
+\]</pre>
+<hr />
+<p><strong>若希望方式 A 的總和小於方式 B：</strong></p>
+<pre class="arithmatex">\[
+2S + 2a + b &lt; 2S + 2b + a
+\]</pre>
+<p>兩邊同時減去 <code>2S</code>：</p>
+<pre class="arithmatex">\[
+2a + b &lt; 2b + a
+\]</pre>
+<p>整理得到：</p>
+<pre class="arithmatex">\[
+a &lt; b
+\]</pre>
+<hr />
+<p><strong>結論</strong></p>
+<p>"若希望方式 A 的總和小於方式 B "，就要" <span class="arithmatex">\(a &lt; b\)</span> " </p>
+<p>應該把 <code>a</code> 排在 <code>b</code> 前面，才能使完成時間總和較小。<br />
+因此，整體最佳策略是：<strong>將工作時間較小的排在前面（由小到大排序）</strong>。</p>
+</div>
 <div class="collapse-code"><input checked="checked" id="__collapse3" name="__collapse3" type="checkbox" /><div class="highlight"><span class="filename">code</span><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 <span class="cp">#define nn &quot;\n&quot;</span>
@@ -4995,57 +5026,89 @@ Time limit: 1 秒 <br />
 1 3 4 7    </p>
 <p>範例結果：    </p>
 <p>145   </p>
-<blockquote>
-<p>我們先看前後關係  <br />
-假設：  <br />
-<span class="arithmatex">\(t[2] = \{A, B\}\)</span>;  <br />
-<span class="arithmatex">\(w[2] = \{a, b\}\)</span>;    </p>
-<p>我們使用「交換前與交換後的關係」去看。    </p>
-<p>有兩種情況：  <br />
-1. <span class="arithmatex">\(A, a\)</span> 先：  <br />
-總額為 <span class="arithmatex">\(Aa + (A + B)b = Aa + Ab + Bb\)</span>  <br />
-2. <span class="arithmatex">\(B, b\)</span> 先（交換後）：  <br />
-總額為 <span class="arithmatex">\(Bb + (A + B)a = Bb + Aa + Ba\)</span>    </p>
-<p>整理過後分別為：  <br />
-<span class="arithmatex">\(\text{ans1} = Aa + Ab + Bb\)</span>  <br />
-<span class="arithmatex">\(\text{ans2} = Aa + Ba + Bb\)</span>    </p>
-<p>我們現在想要看怎樣能夠得到比較小。  <br />
-假設我們希望交換前小於交換後，也就是 <span class="arithmatex">\(\text{ans1} &lt; \text{ans2}\)</span>，得到：  <br />
-[<br />
-Aa + Ab + Bb &lt; Bb + Aa + Ba<br />
-]  <br />
-<span class="arithmatex">\(\Rightarrow Ab + Bb &lt; Bb + Ba\)</span>  <br />
-<span class="arithmatex">\(\Rightarrow Ab &lt; Ba\)</span>    </p>
-<p>所以可知如果 <span class="arithmatex">\(Ab &lt; Ba\)</span>，交換前會小於交換後。</p>
-</blockquote>
+<div class="i">
+<p>假設只考慮相鄰的兩個工作 <span class="arithmatex">\(a\)</span>、<span class="arithmatex">\(b\)</span>：</p>
+<ul>
+<li>工作 <span class="arithmatex">\(a\)</span> 的處理時間為 <span class="arithmatex">\(t_a\)</span>，重要性（權重）為 <span class="arithmatex">\(w_a\)</span></li>
+<li>工作 <span class="arithmatex">\(b\)</span> 的處理時間為 <span class="arithmatex">\(t_b\)</span>，重要性（權重）為 <span class="arithmatex">\(w_b\)</span></li>
+</ul>
+<p>令 <span class="arithmatex">\(S\)</span> 表示：在 <span class="arithmatex">\(a\)</span> 和 <span class="arithmatex">\(b\)</span> 之前，所有已排工作的「處理時間總和」（也就是目前累積時間）。</p>
+<p>題目總扣款為 <span class="arithmatex">\(\sum f_i \cdot w_i\)</span>，其中 <span class="arithmatex">\(f_i\)</span> 是該工作的完成時間。</p>
 <hr />
-<blockquote>
-<p>我們也可以來看看 GPT 的解釋    </p>
-<p>這是因為我們希望最小化扣款總額，  <br />
-而扣款總額是由每個工作的完成時間和重要性的乘積之和計算得出的。  <br />
-因此，我們希望先完成那些重要性高但所需時間短的工作，  <br />
-以便盡快完成它們並減少扣款。    </p>
-<p>假設有兩個工作 <span class="arithmatex">\(A\)</span> 和 <span class="arithmatex">\(B\)</span>，它們的所需時間分別為 <span class="arithmatex">\(t_A\)</span> 和 <span class="arithmatex">\(t_B\)</span>，  <br />
-重要性分別為 <span class="arithmatex">\(w_A\)</span> 和 <span class="arithmatex">\(w_B\)</span>。    </p>
-<p>如果我們先完成工作 <span class="arithmatex">\(A\)</span> 再完成工作 <span class="arithmatex">\(B\)</span>，  <br />
-則扣款總額為 <span class="arithmatex">\(w_A \times t_A + w_B \times (t_A + t_B)\)</span>。    </p>
-<p>如果我們先完成工作 <span class="arithmatex">\(B\)</span> 再完成工作 <span class="arithmatex">\(A\)</span>，  <br />
-則扣款總額為 <span class="arithmatex">\(w_B \times t_B + w_A \times (t_A + t_B)\)</span>。    </p>
-<p>兩種情況下的扣款差額為：    </p>
+<p><strong>方式 A：先做 <span class="arithmatex">\(a\)</span> 再做 <span class="arithmatex">\(b\)</span></strong></p>
+<ul>
+<li><span class="arithmatex">\(a\)</span> 的完成時間為 <span class="arithmatex">\(S+t_a\)</span>，扣款為 <span class="arithmatex">\((S+t_a)w_a\)</span></li>
+<li><span class="arithmatex">\(b\)</span> 的完成時間為 <span class="arithmatex">\(S+t_a+t_b\)</span>，扣款為 <span class="arithmatex">\((S+t_a+t_b)w_b\)</span></li>
+</ul>
+<p>因此這兩個工作的扣款總和為：</p>
+<pre class="arithmatex">\[
+C_A=(S+t_a)w_a+(S+t_a+t_b)w_b
+\]</pre>
+<hr />
+<p><strong>方式 B：先做 <span class="arithmatex">\(b\)</span> 再做 <span class="arithmatex">\(a\)</span></strong></p>
+<ul>
+<li><span class="arithmatex">\(b\)</span> 的完成時間為 <span class="arithmatex">\(S+t_b\)</span>，扣款為 <span class="arithmatex">\((S+t_b)w_b\)</span></li>
+<li><span class="arithmatex">\(a\)</span> 的完成時間為 <span class="arithmatex">\(S+t_b+t_a\)</span>，扣款為 <span class="arithmatex">\((S+t_b+t_a)w_a\)</span></li>
+</ul>
+<p>因此這兩個工作的扣款總和為：</p>
+<pre class="arithmatex">\[
+C_B=(S+t_b)w_b+(S+t_b+t_a)w_a
+\]</pre>
+<hr />
+<p><strong>比較 A 與 B 哪個較好（推導排序規則）</strong></p>
+<p>若希望方式 A 不比方式 B 差（A 較好或一樣好），則</p>
+<pre class="arithmatex">\[
+C_A \le C_B
+\]</pre>
+<p>也就是</p>
+<pre class="arithmatex">\[
+(S+t_a)w_a+(S+t_a+t_b)w_b \le (S+t_b)w_b+(S+t_b+t_a)w_a
+\]</pre>
+<hr />
+<p><strong>展開並化簡（把過程寫完整）</strong></p>
+<p>左邊展開：</p>
 <pre class="arithmatex">\[
 \begin{aligned}
-(w_A \times t_A + w_B \times (t_A + t_B)) &amp;- (w_B \times t_B + w_A \times (t_A + t_B)) \\
-&amp;= w_A \times t_A + w_B \times t_A - w_A \times t_B \\
-&amp;= (w_A / t_A - w_B / t_B) \times t_A \times t_B
+(S+t_a)w_a+(S+t_a+t_b)w_b
+&amp;= Sw_a+t_aw_a+(S+t_a+t_b)w_b \\
+&amp;= Sw_a+t_aw_a+Sw_b+t_aw_b+t_bw_b \\
+&amp;= S(w_a+w_b)+t_aw_a+t_aw_b+t_bw_b
 \end{aligned}
 \]</pre>
-<p>因此，如果 <span class="arithmatex">\( \frac{w_A}{t_A} &gt; \frac{w_B}{t_B} \)</span>，  <br />
-則先完成工作 <span class="arithmatex">\(A\)</span> 再完成工作 <span class="arithmatex">\(B\)</span> 的扣款總額較小；  <br />
-反之，如果 <span class="arithmatex">\( \frac{w_A}{t_A} &lt; \frac{w_B}{t_B} \)</span>，  <br />
-則先完成工作 <span class="arithmatex">\(B\)</span> 再完成工作 <span class="arithmatex">\(A\)</span> 的扣款總額較小。    </p>
-<p>因此，我們可以根據每個工作的「重要性/所需時間」來排序，  <br />
-並選擇最高比值的工作來執行。希望這對你有所幫助！</p>
-</blockquote>
+<p>右邊展開：</p>
+<pre class="arithmatex">\[
+\begin{aligned}
+(S+t_b)w_b+(S+t_b+t_a)w_a
+&amp;= Sw_b+t_bw_b+(S+t_b+t_a)w_a \\
+&amp;= Sw_b+t_bw_b+Sw_a+t_bw_a+t_aw_a \\
+&amp;= S(w_a+w_b)+t_bw_b+t_bw_a+t_aw_a
+\end{aligned}
+\]</pre>
+<p>代回不等式：</p>
+<pre class="arithmatex">\[
+S(w_a+w_b)+t_aw_a+t_aw_b+t_bw_b \le S(w_a+w_b)+t_bw_b+t_bw_a+t_aw_a
+\]</pre>
+<p>兩邊同時減去相同的 <span class="arithmatex">\(S(w_a+w_b)\)</span>：</p>
+<pre class="arithmatex">\[
+t_aw_a+t_aw_b+t_bw_b \le t_bw_b+t_bw_a+t_aw_a
+\]</pre>
+<p>兩邊同時減去相同的 <span class="arithmatex">\(t_aw_a\)</span>：</p>
+<pre class="arithmatex">\[
+t_aw_b+t_bw_b \le t_bw_b+t_bw_a
+\]</pre>
+<p>兩邊同時減去相同的 <span class="arithmatex">\(t_bw_b\)</span>：</p>
+<pre class="arithmatex">\[
+t_aw_b \le t_bw_a
+\]</pre>
+<p>因此得到排序判斷條件：</p>
+<pre class="arithmatex">\[
+t_a w_b \le t_b w_a
+\]</pre>
+<hr />
+<p><strong>結論（排序方式）</strong></p>
+<p>為了讓總扣款 <span class="arithmatex">\(\sum f_i w_i\)</span> 最小：</p>
+<p>任意相鄰兩個工作 <span class="arithmatex">\(a,b\)</span> 的相對順序應滿足  <span class="arithmatex">\(t_a w_b \le t_b w_a\)</span>）</p>
+</div>
 <div class="collapse-code"><input checked="checked" id="__collapse5" name="__collapse5" type="checkbox" /><div class="highlight"><span class="filename">code</span><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 <span class="cp">#define nn &quot;\n&quot;</span>
@@ -5111,147 +5174,146 @@ Aa + Ab + Bb &lt; Bb + Aa + Ba<br />
 1 2 3    </p>
 <p>範例結果：    </p>
 <p>19   </p>
-<blockquote>
-<p>這題跟上一題很像  <br />
-假設有陣列：  <br />
-<span class="arithmatex">\( w[3] = \{D, B, A\} \)</span>;  // <span class="arithmatex">\(c\)</span> 大小寫難分辨  <br />
-<span class="arithmatex">\( t[3] = \{d, b, a\} \)</span>;  <br />
-我們使用「交換前與交換後的關係」去看。    </p>
-</blockquote>
+<div class="i">
+<p>假設只考慮相鄰的兩個物品 <span class="arithmatex">\(a\)</span>、<span class="arithmatex">\(b\)</span>（由上而下排列）：<br />
+- 相鄰兩個物品：<span class="arithmatex">\(a\)</span>、<span class="arithmatex">\(b\)</span><br />
+  - 重量：<span class="arithmatex">\(w_a, w_b\)</span><br />
+  - 取用次數：<span class="arithmatex">\(f_a, f_b\)</span><br />
+- 令 <span class="arithmatex">\(S\)</span> 表示：在 <span class="arithmatex">\(a\)</span>、<span class="arithmatex">\(b\)</span> 上方所有物品的「總重量」（prefix weight sum）</p>
+<p>題意是：取用某一層時，要把它上方所有物品升高，消耗能量 =「上方重量總和」；因此每一層的能量 =（上方重量總和）<span class="arithmatex">\(\times\)</span>（該層取用次數）。</p>
 <hr />
-<blockquote>
-<p><span class="arithmatex">\(A, B\)</span> 交換前為：</p>
+<p><strong>情況 1：<span class="arithmatex">\(a\)</span> 在 <span class="arithmatex">\(b\)</span> 上面（順序：<span class="arithmatex">\(S \rightarrow a \rightarrow b\)</span>）</strong></p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th style="text-align: center;">重量</th>
-<th style="text-align: center;">次數</th>
+<th>層數</th>
+<th style="text-align: right;">重量</th>
+<th style="text-align: right;">次數</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>第一層</td>
-<td style="text-align: center;">D</td>
-<td style="text-align: center;">d</td>
+<td>上方（已固定）</td>
+<td style="text-align: right;"><span class="arithmatex">\(S\)</span></td>
+<td style="text-align: right;">—</td>
 </tr>
 <tr>
-<td>第二層</td>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">b</td>
+<td>中間（要比較）</td>
+<td style="text-align: right;"><span class="arithmatex">\(w_a\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(f_a\)</span></td>
 </tr>
 <tr>
-<td>第三層</td>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">a</td>
+<td>下方（要比較）</td>
+<td style="text-align: right;"><span class="arithmatex">\(w_b\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(f_b\)</span></td>
 </tr>
 </tbody>
 </table>
+<p>對應的能量消耗（逐層看「上方重量」）：</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: center;"></th>
-<th style="text-align: center;">消耗能量</th>
+<th>層數</th>
+<th style="text-align: right;">上方重量總和</th>
+<th style="text-align: right;">本層消耗能量</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;">第一層</td>
-<td style="text-align: center;">0 (上面沒東西)</td>
+<td><span class="arithmatex">\(a\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(S\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(S\cdot f_a\)</span></td>
 </tr>
 <tr>
-<td style="text-align: center;">第二層</td>
-<td style="text-align: center;">D*b</td>
-</tr>
-<tr>
-<td style="text-align: center;">第三層</td>
-<td style="text-align: center;">(D+B)*a</td>
-</tr>
-<tr>
-<td style="text-align: center;">總計</td>
-<td style="text-align: center;">D<em>b+(D+B)</em>a</td>
-</tr>
-<tr>
-<td style="text-align: center;">總計乘開</td>
-<td style="text-align: center;">D*b+D*a+B*a</td>
+<td><span class="arithmatex">\(b\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(S+w_a\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\((S+w_a)\cdot f_b\)</span></td>
 </tr>
 </tbody>
 </table>
-</blockquote>
+<p>因此這兩層在此順序下的總消耗能量為</p>
+<pre class="arithmatex">\[
+\begin{aligned}
+C_A
+&amp;= S f_a + (S+w_a)f_b \\
+&amp;= S(f_a+f_b) + w_a f_b
+\end{aligned}
+\]</pre>
 <hr />
-<blockquote>
-<p>AB交換後為：</p>
+<p><strong>情況 2：<span class="arithmatex">\(b\)</span> 在 <span class="arithmatex">\(a\)</span> 上面（順序：<span class="arithmatex">\(S \rightarrow b \rightarrow a\)</span>）</strong></p>
 <table>
 <thead>
 <tr>
-<th></th>
-<th style="text-align: center;">重量</th>
-<th style="text-align: center;">次數</th>
+<th>層數</th>
+<th style="text-align: right;">重量</th>
+<th style="text-align: right;">次數</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>第一層</td>
-<td style="text-align: center;">D</td>
-<td style="text-align: center;">d</td>
+<td>上方（已固定）</td>
+<td style="text-align: right;"><span class="arithmatex">\(S\)</span></td>
+<td style="text-align: right;">—</td>
 </tr>
 <tr>
-<td>第二層</td>
-<td style="text-align: center;">A</td>
-<td style="text-align: center;">a</td>
+<td>中間（要比較）</td>
+<td style="text-align: right;"><span class="arithmatex">\(w_b\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(f_b\)</span></td>
 </tr>
 <tr>
-<td>第三層</td>
-<td style="text-align: center;">B</td>
-<td style="text-align: center;">b</td>
+<td>下方（要比較）</td>
+<td style="text-align: right;"><span class="arithmatex">\(w_a\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(f_a\)</span></td>
 </tr>
 </tbody>
 </table>
+<p>能量消耗表：</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: center;"></th>
-<th style="text-align: center;">消耗能量</th>
+<th>層數</th>
+<th style="text-align: right;">上方重量總和</th>
+<th style="text-align: right;">本層消耗能量</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;">第一層</td>
-<td style="text-align: center;">0 (上面沒東西)</td>
+<td><span class="arithmatex">\(b\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(S\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(S\cdot f_b\)</span></td>
 </tr>
 <tr>
-<td style="text-align: center;">第二層</td>
-<td style="text-align: center;">D*a</td>
-</tr>
-<tr>
-<td style="text-align: center;">第三層</td>
-<td style="text-align: center;">(D+A)*b</td>
-</tr>
-<tr>
-<td style="text-align: center;">總計</td>
-<td style="text-align: center;">D<em>a+(D+A)</em>b</td>
-</tr>
-<tr>
-<td style="text-align: center;">總計乘開</td>
-<td style="text-align: center;">D*a+D*b+A*b</td>
+<td><span class="arithmatex">\(a\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(S+w_b\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\((S+w_b)\cdot f_a\)</span></td>
 </tr>
 </tbody>
 </table>
-</blockquote>
+<p>因此這兩層在此順序下的總消耗能量為</p>
+<pre class="arithmatex">\[
+\begin{aligned}
+C_B
+&amp;= S f_b + (S+w_b)f_a \\
+&amp;= S(f_a+f_b) + w_b f_a
+\end{aligned}
+\]</pre>
 <hr />
-<blockquote>
-<p>現在想要看移動前小於移動後的條件：</p>
+<p><strong>比較兩種順序（推出排序規則）</strong></p>
+<p>把兩個總能量展開後可看出，兩邊都有相同的 <span class="arithmatex">\(S(f_a+f_b)\)</span>，因此比較時只需要看剩下的部分：</p>
 <pre class="arithmatex">\[
-Db + (D + B)a &lt; Da + (D + A)b
+\begin{aligned}
+C_A \le C_B
+&amp;\;\Rightarrow\; S(f_a+f_b) + w_a f_b \le S(f_a+f_b) + w_b f_a \\
+&amp;\;\Rightarrow\; w_a f_b \le w_b f_a
+\end{aligned}
 \]</pre>
+<hr />
+<p><strong>結論（排序方式）</strong></p>
+<p>若要讓總能量最小，當 <span class="arithmatex">\(a\)</span> 與 <span class="arithmatex">\(b\)</span> 相鄰時，應讓它們的上下順序滿足</p>
 <pre class="arithmatex">\[
-\Rightarrow Db + Da + Ba &lt; Da + Db + Ab
+w_a f_b \le w_b f_a
 \]</pre>
-<pre class="arithmatex">\[
-\Rightarrow Ba &lt; Ab
-\]</pre>
-<p>知道排序的條件後就可以寫程式了。</p>
-</blockquote>
+</div>
 <div class="collapse-code"><input checked="checked" id="__collapse6" name="__collapse6" type="checkbox" /><div class="highlight"><span class="filename">code</span><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 <span class="cp">#define nn &quot;\n&quot;</span>
@@ -5307,33 +5369,54 @@ Db + (D + B)a &lt; Da + (D + A)b
 <p>範例結果：   </p>
 <p>9  <br />
 13   </p>
-<blockquote>
+<div class="i">
 <p>根據題目我們可以將合併的過程畫成樹狀圖</p>
-</blockquote>
 <p><img alt="alt text" src="../images/%E8%B2%AA%E5%BF%83%E6%BC%94%E7%AE%97%E6%B3%95%28Greedy%29/image-29.png" /></p>
-<blockquote>
-<p>知道合併過程後要開始討論誰先合併，誰後合併。    </p>
-<p>我們一樣使用「比較交換前後」來證明，因為 <span class="arithmatex">\(B\)</span> 與 <span class="arithmatex">\(C\)</span> 交換沒意義，我們交換 <span class="arithmatex">\(A\)</span> 與 <span class="arithmatex">\(B\)</span>。    </p>
-<p><span class="arithmatex">\(A, B\)</span> 交換前最低成本：   </p>
+<p>知道合併的規則後，我們要開始討論「先合併誰、後合併誰」才會讓總成本最小。</p>
+<p>根據題目，我們可以把合併過程畫成樹狀圖：<br />
+每個內部節點代表一次合併，而該次合併的成本就是兩個子節點數值的和。<br />
+例如圖中先把 <span class="arithmatex">\(b\)</span> 與 <span class="arithmatex">\(c\)</span> 合併成 <span class="arithmatex">\(b+c\)</span>，再把 <span class="arithmatex">\((b+c)\)</span> 與 <span class="arithmatex">\(a\)</span> 合併，並一路往上合併到根節點。</p>
+<hr />
+<p><strong>方法 A（樹上先形成節點 <span class="arithmatex">\(b+c\)</span>，再與 <span class="arithmatex">\(a\)</span> 合併）</strong></p>
+<p>依照圖的做法：<br />
+- 先合併 <span class="arithmatex">\(b\)</span> 與 <span class="arithmatex">\(c\)</span>，成本是 <span class="arithmatex">\(b+c\)</span><br />
+- 再合併 <span class="arithmatex">\((b+c)\)</span> 與 <span class="arithmatex">\(a\)</span>，成本是 <span class="arithmatex">\((b+c)+a\)</span></p>
+<p>所以方法 A 的總成本為</p>
 <pre class="arithmatex">\[
-B + C + (B + C) + A
+(b+c) + \bigl((b+c)+a\bigr)
 \]</pre>
-<p><span class="arithmatex">\(A, B\)</span> 交換後最低成本：    </p>
+<hr />
+<p><strong>方法 B（樹上先形成節點 <span class="arithmatex">\(a+c\)</span>，再與 <span class="arithmatex">\(b\)</span> 合併）</strong></p>
+<p>改成另一種樹的安排：<br />
+- 先合併 <span class="arithmatex">\(a\)</span> 與 <span class="arithmatex">\(c\)</span>，成本是 <span class="arithmatex">\(a+c\)</span><br />
+- 再合併 <span class="arithmatex">\((a+c)\)</span> 與 <span class="arithmatex">\(b\)</span>，成本是 <span class="arithmatex">\((a+c)+b\)</span></p>
+<p>所以方法 B 的總成本為</p>
 <pre class="arithmatex">\[
-A + C + (A + C) + B
+(a+c) + \bigl((a+c)+b\bigr)
 \]</pre>
-<p>交換前小於交換後：    </p>
+<hr />
+<p><strong>比較方法 A 與方法 B（推出規則）</strong></p>
+<p>若希望方法 A 的總成本小於等於方法 B，則</p>
 <pre class="arithmatex">\[
-B + C + (B + C) + A &lt; A + C + (A + C) + B
+(b+c) + \bigl((b+c)+a\bigr) \le (a+c) + \bigl((a+c)+b\bigr)
 \]</pre>
+<p>把左右展開：</p>
 <pre class="arithmatex">\[
-\Rightarrow A + B + B + C + C &lt; A + A + B + C + C
+b+c+b+c+a \le a+c+a+c+b
 \]</pre>
+<p>把兩邊共同的 <span class="arithmatex">\(b\)</span> 與兩個 <span class="arithmatex">\(c\)</span> 消掉：</p>
 <pre class="arithmatex">\[
-\Rightarrow A &lt; B
+a+b \le 2a
 \]</pre>
-<p>知道規則後就可以寫程式了。</p>
-</blockquote>
+<p>整理得到</p>
+<pre class="arithmatex">\[
+b \le a
+\]</pre>
+<hr />
+<p><strong>結論（合併策略）</strong></p>
+<p>要讓總成本最小，就應該每一步都先合併目前最小的兩個門派。<br />
+也就是要讓 <span class="arithmatex">\(b\)</span> 比 <span class="arithmatex">\(a\)</span> 小(樹狀圖下面的比較小)。</p>
+</div>
 <hr />
 <blockquote>
 <p>這題需要一直排序，而且要容許多個元素<br />
@@ -5391,17 +5474,15 @@ Time limit: 1 秒 </p>
 3 1 5     </p>
 <p>範例結果：     </p>
 <p>6    </p>
-<blockquote>
+<div class="i">
 <p>這題思考遺下就會發現，如果第i個不是在數字最少的櫃台，之後就沒有人可以去最少   的，<br />
 因為不能比第i個早開始。   </p>
 <p>可以看到圖：   </p>
-</blockquote>
 <p><img alt="alt text" src="../images/%E8%B2%AA%E5%BF%83%E6%BC%94%E7%AE%97%E6%B3%95%28Greedy%29/image-32.png" /></p>
-<blockquote>
 <p>這題需要一直排序，而且只需要使用到最小值，有沒有想到誰呢？  <br />
 那就是priority_queue啦~  <br />
 記得要存為負數得到最小值    </p>
-</blockquote>
+</div>
 <div class="collapse-code"><input checked="checked" id="__collapse8" name="__collapse8" type="checkbox" /><div class="highlight"><span class="filename">code</span><pre><span></span><code><span class="cp">#include</span><span class="cpf">&lt;bits/stdc++.h&gt;</span>
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 
