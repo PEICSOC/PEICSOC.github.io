@@ -381,10 +381,10 @@ document.addEventListener("DOMContentLoaded", function() {
 把整段放進你的 tts.md（snippets）即可
 
 這版變更：
-- ✅ 亮色模式時：header 的「選聲音按鈕」圓形底色改成「較深的主題色」，圖示為白色
-- ✅ 暗色模式維持原本透明/跟隨主題
+- ✅ 亮色模式：header 圓形按鈕「未 hover」= 較淺主題色；「hover」= 較深主題色；圖示白色
+- ✅ 暗色模式維持透明/跟隨主題
 
-其餘功能同前：
+功能（同前）：
 - 句子後面播放鍵（CSS 畫圖示）
 - 反白任意文字：跳出「播放 + 中文翻譯」
 - 點外面關翻譯框；點翻譯框內不關；翻譯框內反白不觸發
@@ -487,7 +487,7 @@ document.addEventListener("DOMContentLoaded", function() {
   line-height: 1.2;
 }
 
-/* ===== Header 小喇叭按鈕（預設：暗色/通用）===== */
+/* ===== Header 小喇叭按鈕（暗色/通用預設）===== */
 #tts-header-voice-toggle{
   width: 30px;                    /* ✅ 可改：喇叭大小 */
   height: 30px;
@@ -500,9 +500,6 @@ document.addEventListener("DOMContentLoaded", function() {
   place-items: center;
   flex: 0 0 auto;
 }
-#tts-header-voice-toggle:hover{
-  color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
-}
 #tts-header-voice-toggle:focus-visible{
   outline: 2px solid var(--md-accent-fg-color, currentColor);
   outline-offset: 2px;
@@ -514,18 +511,19 @@ document.addEventListener("DOMContentLoaded", function() {
   fill: currentColor;
 }
 
-/* ✅ 亮色模式：圓形底色改成「較深的主題色」，圖示白色
-   Material 亮色通常是 default/light 方案；你如果有自訂 scheme 名稱，也可再補 selector
-*/
+/* ✅ 亮色模式：未 hover = 較淺主題色；hover = 較深主題色；圖示白色 */
 [data-md-color-scheme="default"] #tts-header-voice-toggle,
 [data-md-color-scheme="light"]   #tts-header-voice-toggle{
-  background: var(--md-primary-fg-color, #5e35b1); /* ✅ 主題色（較深） */
+  background: var(--md-primary-fg-color--lighter,
+              var(--md-primary-fg-color--light,
+              var(--md-primary-fg-color, #5e35b1))); /* ✅ 未 hover：較淺 */
   border-color: transparent;
-  color: #fff;                                     /* ✅ 白色圖示 */
+  color: #fff;
 }
 [data-md-color-scheme="default"] #tts-header-voice-toggle:hover,
 [data-md-color-scheme="light"]   #tts-header-voice-toggle:hover{
-  background: var(--md-accent-fg-color, #5e35b1);   /* ✅ hover 用 accent（同色也行） */
+  background: var(--md-primary-fg-color, #5e35b1);   /* ✅ hover：較深 */
+  color: #fff;
 }
 
 /* =========================
@@ -544,10 +542,9 @@ document.addEventListener("DOMContentLoaded", function() {
   border: 1px solid var(--md-default-fg-color--lightest, rgba(255,255,255,.18));
   box-shadow: 0 10px 30px rgba(0,0,0,.25);
 
-  font-size: 1rem;                 /* ✅ 與內文一致 */
+  font-size: 1rem;
   font-weight: normal;
 
-  /* ✅ 不超出視窗 */
   max-width: calc(100vw - 16px);
   box-sizing: border-box;
 
@@ -622,7 +619,7 @@ document.addEventListener("DOMContentLoaded", function() {
   background: rgba(0,0,0,.18);
   overflow: auto;
 
-  max-height: min(42vh, 320px); /* ✅ 可改：清單高度 */
+  max-height: min(42vh, 320px); /* ✅ 可改 */
   display: none;
 }
 .tts-dd.open .tts-dd-list{ display: block; }
@@ -702,7 +699,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const TRANSLATE_TO = "zh-TW";
   const TRANSLATE_FROM = "en"; // 也可改 "auto"
 
-  const MAX_VOICES_RENDER = 2000; // ✅ 可改：最多渲染 voice 數
+  const MAX_VOICES_RENDER = 2000;
   /* ========================= */
 
   let currentBtn = null;
@@ -815,9 +812,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  /* =========================
-     自動分段：中文用 zh，英文用 en
-     ========================= */
   function splitByLang(text){
     const s = (text || "");
     const out = [];
@@ -903,9 +897,6 @@ document.addEventListener("DOMContentLoaded", function() {
     try { speechSynthesis.speak(u); } catch (_) { stop(); }
   }
 
-  /* =========================
-     句子按鈕：綁到 .tts
-     ========================= */
   function attachSentenceButtons(root){
     const scope = root || document;
     scope.querySelectorAll(".tts").forEach(textSpan => {
@@ -935,9 +926,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  /* =========================
-     Header：塞進 .md-header__ellipsis
-     ========================= */
   function getHeaderEllipsis(){
     return document.querySelector(".md-header__ellipsis");
   }
@@ -976,9 +964,6 @@ document.addEventListener("DOMContentLoaded", function() {
     return true;
   }
 
-  /* =========================
-     Voice Panel：自製 dropdown（不使用 <select>）
-     ========================= */
   function ensureVoicePanelPortal(){
     let panel = document.getElementById("tts-voice-panel-portal");
     if (panel) return panel;
@@ -1168,9 +1153,6 @@ document.addEventListener("DOMContentLoaded", function() {
     panel.style.top  = top + "px";
   }
 
-  /* =========================
-     反白浮動工具：播放 + 翻譯
-     ========================= */
   function ensureSelectionPop() {
     let pop = document.getElementById("tts-selection-pop");
     if (pop) return pop;
@@ -1244,7 +1226,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   async function translateToZh(text) {
-    const key = `${TRANSLATE_FROM}|${TRANSLATE_TO}|${text}`;
+    const key = `${TRANSLATE_FROM}|zh|${text}`;
     if (translateCache.has(key)) return translateCache.get(key);
 
     const url =
@@ -1301,9 +1283,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  /* =========================
-     全域事件（關面板 / 關翻譯框 / 修正 instant nav）
-     ========================= */
   function bindGlobalEventsOnce(){
     if (globalEventsBound) return;
     globalEventsBound = true;
