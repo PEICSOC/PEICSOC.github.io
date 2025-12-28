@@ -1,12 +1,3 @@
-<!--
-放在 tts.md（snippets）即可。
-
-功能：
-- 每個 .tts 句子自動加播放按鈕（圖形，不用 ▶）
-- 每個 H1 右側加「語音選擇小喇叭」，點了才展開選單（桌機/手機都可）
-- 反白任何文字：浮動播放鍵 + 中文翻譯（Google gtx endpoint）
--->
-
 <style>
 /* =========================
    句子 TTS：文字 + 按鈕（避免 st/nd 跑位）
@@ -83,39 +74,33 @@
 }
 
 /* =========================
-   H1 右側：語音選擇小喇叭（點了才展開）
+   H1 右邊（靠左）：語音選擇小按鈕 + 展開面板
    ========================= */
-
-/* 讓 H1 有空間放右上角控制 */
-.md-content__inner h1{
-  position: relative;
-  padding-right: 88px;        /* ✅ 可改：避免標題太長被遮住 */
-}
-
-/* 小控制整體容器 */
+/* 不改 h1 佈局（不靠頁面最右），只在文字後插一個 inline 控制 */
 .tts-voice-mini{
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  margin-left: 10px;
 
-  z-index: 2;
+  /* ✅ 讓語音 UI 不跟著 h1 的大字體走，大小跟內文一致 */
+  font-size: 1rem;
+  font-weight: normal;
+  line-height: 1.2;
+
+  vertical-align: middle;
+  position: relative; /* popover 參考點 */
 }
 
-/* 喇叭按鈕（小小的） */
+/* 小喇叭按鈕 */
 .tts-voice-toggle{
-  width: 30px;                /* ✅ 可改：喇叭按鈕大小 */
+  width: 30px;                /* ✅ 可改：喇叭大小 */
   height: 30px;
   border-radius: 999px;
   border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.2));
   background: transparent;
   color: var(--md-primary-fg-color, currentColor);
   cursor: pointer;
-
   display: inline-grid;
   place-items: center;
 }
@@ -126,37 +111,54 @@
   outline: 2px solid var(--md-accent-fg-color, currentColor);
   outline-offset: 2px;
 }
-
-/* SVG 讓顏色跟隨 currentColor */
 .tts-voice-toggle svg{ width: 16px; height: 16px; display:block; fill: currentColor; }
 
-/* 下拉選單預設縮起來（小小的），點喇叭才展開 */
+/* 展開面板（預設隱藏，點選才出現） */
+.tts-voice-panel{
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 50;
+
+  min-width: min(420px, 92vw);
+  padding: 10px 12px;
+  border-radius: 14px;
+
+  background: var(--md-default-bg-color, rgba(20,20,20,.92));
+  border: 1px solid var(--md-default-fg-color--lightest, rgba(255,255,255,.18));
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+
+  display: none;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  /* ✅ 面板文字大小同內文 */
+  font-size: 1rem;
+  font-weight: normal;
+}
+.tts-voice-mini.open .tts-voice-panel{ display: flex; }
+
+.tts-voice-panel label{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  color: var(--md-default-fg-color, #ddd);
+}
+
+/* 兩個下拉：EN / ZH */
 .tts-voice-picker{
   font: inherit;
+  font-size: 1rem;            /* ✅ 跟內文一致 */
   border-radius: 10px;
   border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.2));
   background: transparent;
   color: inherit;
-
   padding: 6px 10px;
-
-  max-width: 0;              /* 收起 */
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-  transition: max-width .18s ease, opacity .18s ease;
-
-  /* ✅ 可改：展開後寬度（見 .open） */
+  max-width: min(320px, 80vw);
 }
 
-/* 展開狀態 */
-.tts-voice-mini.open .tts-voice-picker{
-  max-width: 320px;          /* ✅ 可改：展開後寬度 */
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* 暗色模式 slate：選單黑底 */
+/* 暗色模式 slate：下拉黑底 */
 [data-md-color-scheme="slate"] .tts-voice-picker{
   background-color: #1e1e1e;
   color: #fff;
@@ -184,7 +186,7 @@
 
   align-items: center;
   gap: 12px;
-  max-width: min(560px, 92vw);
+  max-width: min(720px, 92vw);
 }
 
 #tts-selection-zh{
@@ -192,51 +194,151 @@
   line-height: 1.35;
   color: var(--md-default-fg-color, #ddd);
   word-break: break-word;
-  max-width: min(480px, 78vw);
+  max-width: min(640px, 78vw);
 }
 #tts-selection-zh .muted{ opacity: .75; }
 </style>
 
 <script>
 (function () {
+  /* ==============
+     你可以改的地方
+     ============== */
+
+  const DEFAULT_LANG_EN = "en-US";                      // ✅ 可改：英文預設語言
+  const DEFAULT_NAME_EN_INCLUDES = "Google US English"; // ✅ 可改：英文預設 voice 關鍵字
+
+  const DEFAULT_LANG_ZH = "zh-TW";                      // ✅ 可改：中文預設語言（繁中）
+  const DEFAULT_NAME_ZH_INCLUDES = "Google";            // ✅ 可改：中文預設 voice 關鍵字（你也可填 "Microsoft" 等）
+
+  const SELECTION_MAX_CHARS = 500;                      // ✅ 你指定：反白最多 500 字
+  const TRANSLATE_TO = "zh-TW";                         // ✅ 可改
+  const TRANSLATE_FROM = "en";                          // ✅ 可改："auto" 也可，但英文練習建議 en
+
+  /* ==============
+     內部狀態
+     ============== */
+
   let currentBtn = null;
+  let activeUtterances = []; // 用於混合中英分段朗讀
+  let isSpeaking = false;
 
-  /* =========================
-     你可以改的地方：預設語音
-     ========================= */
-  const DEFAULT_LANG = "en-US";                      // ✅ 可改：例如 "en-GB"
-  const DEFAULT_NAME_INCLUDES = "Google US English"; // ✅ 可改：例如 "Google UK English"
-  /* ========================= */
-
-  /* =========================
-     你要的修改：反白字數上限
-     ========================= */
-  const SELECTION_MAX_CHARS = 500;   // ✅ 已依你需求改成 500
-  const SELECTION_LANG = "en-US";    // ✅ 可改：反白朗讀的預設語言（仍會用你選到的 voice）
-  /* ========================= */
-
-  /* 翻譯設定（Google gtx endpoint） */
-  const TRANSLATE_TO = "zh-TW";      // ✅ 可改：繁中
-  const TRANSLATE_FROM = "en";       // ✅ 可改："auto" 也可，但建議英文練習用 en
   const translateCache = new Map();
 
-  /* 語音選擇：全站共用索引（會存 localStorage） */
-  const LS_VOICE_IDX_KEY = "ttsVoiceIndex";
-  let voiceIndex = null;
-  try {
-    const saved = localStorage.getItem(LS_VOICE_IDX_KEY);
-    if (saved !== null) {
-      const n = parseInt(saved, 10);
-      if (Number.isFinite(n)) voiceIndex = n;
-    }
-  } catch (_) {}
+  // 用「key」儲存語音，避免不同瀏覽器 index 變動
+  const LS_VOICE_EN = "ttsVoiceKeyEN";
+  const LS_VOICE_ZH = "ttsVoiceKeyZH";
+  let voiceKeyEN = safeGetLS(LS_VOICE_EN);
+  let voiceKeyZH = safeGetLS(LS_VOICE_ZH);
+
+  // Global：避免重複綁事件
+  let globalEventsBound = false;
+  let observer = null;
+  let scheduled = false;
+
+  function safeGetLS(key){
+    try { return localStorage.getItem(key) || null; } catch (_) { return null; }
+  }
+  function safeSetLS(key, val){
+    try { localStorage.setItem(key, val); } catch (_) {}
+  }
 
   function supported() {
     return ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window);
   }
 
+  function warmVoices() {
+    try { speechSynthesis.getVoices(); } catch (_) {}
+  }
+
+  function getVoices() {
+    return speechSynthesis.getVoices() || [];
+  }
+
+  function voiceKey(v){
+    // voiceURI 在多數瀏覽器較穩；沒有就用 lang+name
+    if (v && v.voiceURI) return "uri:" + v.voiceURI;
+    return "nl:" + (v.lang || "") + "||" + (v.name || "");
+  }
+
+  function findVoiceByKey(key){
+    if (!key) return null;
+    const voices = getVoices();
+    for (const v of voices) {
+      if (voiceKey(v) === key) return v;
+    }
+    return null;
+  }
+
+  function isZhLang(lang){
+    const l = (lang || "").toLowerCase();
+    return l.startsWith("zh");
+  }
+
+  function isEnLang(lang){
+    const l = (lang || "").toLowerCase();
+    return l.startsWith("en");
+  }
+
+  function pickDefaultVoiceKey(voices, langNeedle, nameIncludes){
+    if (!voices.length) return null;
+
+    const needle = (nameIncludes || "").toLowerCase();
+    const langN = (langNeedle || "").toLowerCase();
+
+    // 1) lang match + name includes
+    let v = voices.find(x => (x.lang||"").toLowerCase() === langN && (x.name||"").toLowerCase().includes(needle));
+    if (v) return voiceKey(v);
+
+    // 2) name includes
+    v = voices.find(x => (x.name||"").toLowerCase().includes(needle));
+    if (v) return voiceKey(v);
+
+    // 3) lang exact
+    v = voices.find(x => (x.lang||"").toLowerCase() === langN);
+    if (v) return voiceKey(v);
+
+    // 4) prefix match (en-* / zh-*)
+    const prefix = langN.split("-")[0];
+    v = voices.find(x => (x.lang||"").toLowerCase().startsWith(prefix));
+    if (v) return voiceKey(v);
+
+    return voiceKey(voices[0]);
+  }
+
+  function ensureVoiceKeys(){
+    const voices = getVoices();
+    if (!voices.length) return;
+
+    if (!voiceKeyEN || !findVoiceByKey(voiceKeyEN)) {
+      voiceKeyEN = pickDefaultVoiceKey(voices.filter(v => isEnLang(v.lang)), DEFAULT_LANG_EN, DEFAULT_NAME_EN_INCLUDES)
+                || pickDefaultVoiceKey(voices, DEFAULT_LANG_EN, DEFAULT_NAME_EN_INCLUDES);
+      if (voiceKeyEN) safeSetLS(LS_VOICE_EN, voiceKeyEN);
+    }
+
+    if (!voiceKeyZH || !findVoiceByKey(voiceKeyZH)) {
+      voiceKeyZH = pickDefaultVoiceKey(voices.filter(v => isZhLang(v.lang)), DEFAULT_LANG_ZH, DEFAULT_NAME_ZH_INCLUDES)
+                || pickDefaultVoiceKey(voices, DEFAULT_LANG_ZH, DEFAULT_NAME_ZH_INCLUDES);
+      if (voiceKeyZH) safeSetLS(LS_VOICE_ZH, voiceKeyZH);
+    }
+  }
+
+  function getVoiceForLangTag(tag){
+    // tag: "en" | "zh"
+    ensureVoiceKeys();
+    if (tag === "zh") return findVoiceByKey(voiceKeyZH) || null;
+    return findVoiceByKey(voiceKeyEN) || null;
+  }
+
+  /* ===========
+     停止朗讀
+     =========== */
   function stop() {
     try { speechSynthesis.cancel(); } catch (_) {}
+
+    activeUtterances = [];
+    isSpeaking = false;
+
     if (currentBtn) {
       currentBtn.setAttribute("data-state", "play");
       currentBtn.setAttribute("aria-pressed", "false");
@@ -244,143 +346,110 @@
     }
   }
 
-  function getMainContainer() {
-    return (
-      document.querySelector(".md-content .md-content__inner") ||
-      document.querySelector("main") ||
-      document.body
-    );
-  }
+  /* =========================
+     自動分段：中文用 zh，英文用 en
+     - 混合文字會拆段依序朗讀
+     ========================= */
+  function splitByLang(text){
+    const s = (text || "");
+    const out = [];
+    let buf = "";
+    let cur = null;
 
-  function warmVoices() {
-    // ✅ 手機（尤其 iOS）常需要「使用者手勢」觸發後才比較會有 voices
-    try { speechSynthesis.getVoices(); } catch (_) {}
-  }
-
-  function getVoices() {
-    return (speechSynthesis.getVoices() || []);
-  }
-
-  function pickDefaultVoiceIndex(voices) {
-    if (!voices.length) return 0;
-
-    const needle = DEFAULT_NAME_INCLUDES.toLowerCase();
-    const langNeedle = DEFAULT_LANG.toLowerCase();
-
-    // 1) DEFAULT_LANG + name includes
-    let idx = voices.findIndex(v =>
-      (v.lang || "").toLowerCase() === langNeedle &&
-      (v.name || "").toLowerCase().includes(needle)
-    );
-    // 2) name includes
-    if (idx < 0) idx = voices.findIndex(v => (v.name || "").toLowerCase().includes(needle));
-    // 3) any DEFAULT_LANG
-    if (idx < 0) idx = voices.findIndex(v => (v.lang || "").toLowerCase() === langNeedle);
-    // 4) any en-*
-    if (idx < 0) idx = voices.findIndex(v => (v.lang || "").toLowerCase().startsWith("en"));
-    // 5) fallback
-    if (idx < 0) idx = 0;
-
-    return idx;
-  }
-
-  function populateVoiceSelect(selectEl) {
-    const voices = getVoices();
-    selectEl.innerHTML = "";
-
-    voices.forEach((v, idx) => {
-      const opt = document.createElement("option");
-      opt.value = String(idx);
-      opt.textContent = `${v.lang} — ${v.name}`;
-      selectEl.appendChild(opt);
-    });
-
-    if (!voices.length) {
-      const opt = document.createElement("option");
-      opt.value = "-1";
-      opt.textContent = "No voices";
-      selectEl.appendChild(opt);
-      return;
+    function flush(){
+      const t = buf.trim();
+      if (t) out.push({ lang: cur || "en", text: t });
+      buf = "";
     }
 
-    if (voiceIndex === null || !Number.isFinite(voiceIndex) || voiceIndex < 0 || voiceIndex >= voices.length) {
-      voiceIndex = pickDefaultVoiceIndex(voices);
-      try { localStorage.setItem(LS_VOICE_IDX_KEY, String(voiceIndex)); } catch (_) {}
+    function charType(ch){
+      if (/[\u4e00-\u9fff\u3400-\u4dbf]/.test(ch)) return "zh"; // CJK
+      if (/[A-Za-z]/.test(ch)) return "en";
+      return "other";
     }
 
-    selectEl.value = String(voiceIndex);
+    for (let i=0;i<s.length;i++){
+      const ch = s[i];
+      const t = charType(ch);
+
+      // other：跟著前一段走（避免標點被丟掉）
+      const lang = (t === "other") ? (cur || "en") : t;
+
+      if (cur === null) cur = lang;
+
+      if (lang !== cur){
+        flush();
+        cur = lang;
+      }
+      buf += ch;
+    }
+    flush();
+
+    // 若整段都沒有中英字母，就當英文（避免空）
+    return out.length ? out : [{ lang: "en", text: (s.trim()) }];
   }
 
-  function populateAllVoicePickers() {
-    document.querySelectorAll("select.tts-voice-picker").forEach(sel => {
-      populateVoiceSelect(sel);
-    });
-  }
-
-  function setVoiceIndexFromSelect(value) {
-    const n = parseInt(value, 10);
-    if (!Number.isFinite(n) || n < 0) return;
-    voiceIndex = n;
-    try { localStorage.setItem(LS_VOICE_IDX_KEY, String(voiceIndex)); } catch (_) {}
-
-    // 同步所有 select
-    document.querySelectorAll("select.tts-voice-picker").forEach(sel => {
-      sel.value = String(voiceIndex);
-    });
-  }
-
-  function getSelectedVoice() {
-    const voices = getVoices();
-    if (!voices.length) return null;
-    if (voiceIndex === null || voiceIndex < 0 || voiceIndex >= voices.length) return voices[0];
-    return voices[voiceIndex] || voices[0];
-  }
-
-  function speak(text, preferredLang, btn) {
+  function speakAuto(text, btn){
     if (!supported()) return;
 
     const t = (text || "").trim();
     if (!t) return;
 
-    // ✅ 修正：只有當這顆按鈕目前真的是 pressed 才視為「再按一次停止」
     const pressed = btn.getAttribute("aria-pressed") === "true";
     if (currentBtn === btn && pressed) {
       stop();
       return;
     }
 
-    stop();
-
-    const u = new SpeechSynthesisUtterance(t);
-    const v = getSelectedVoice();
-
-    if (v) {
-      u.voice = v;
-      u.lang = v.lang || preferredLang || DEFAULT_LANG;
-    } else {
-      u.lang = preferredLang || DEFAULT_LANG;
-    }
-
-    /* =========================
-       你可以改的地方：語速/音高
-       ========================= */
-    u.rate = 1.0;   // ✅ 可改：0.85 慢速，1.0 正常，1.1~1.2 加速
-    u.pitch = 1.0;  // ✅ 可改
-    /* ========================= */
+    stop(); // 停掉別的正在播
 
     btn.setAttribute("data-state", "stop");
     btn.setAttribute("aria-pressed", "true");
     currentBtn = btn;
 
-    u.onend = stop;
-    u.onerror = stop;
+    // 建 utterance queue
+    const segs = splitByLang(t);
+    activeUtterances = segs.map(seg => {
+      const u = new SpeechSynthesisUtterance(seg.text);
 
-    warmVoices();
-    speechSynthesis.speak(u);
+      // ✅ 可改：語速/音高（這裡是全局）
+      u.rate = 1.0;
+      u.pitch = 1.0;
+
+      const v = getVoiceForLangTag(seg.lang);
+      if (v) {
+        u.voice = v;
+        u.lang = v.lang || (seg.lang === "zh" ? DEFAULT_LANG_ZH : DEFAULT_LANG_EN);
+      } else {
+        u.lang = (seg.lang === "zh" ? DEFAULT_LANG_ZH : DEFAULT_LANG_EN);
+      }
+      return u;
+    });
+
+    // 依序播放
+    isSpeaking = true;
+    playNext();
   }
 
-  function attachSentenceButtons() {
-    document.querySelectorAll(".tts").forEach(textSpan => {
+  function playNext(){
+    if (!activeUtterances.length){
+      stop();
+      return;
+    }
+    const u = activeUtterances.shift();
+    u.onend = () => playNext();
+    u.onerror = () => stop();
+
+    warmVoices();
+    try { speechSynthesis.speak(u); } catch (_) { stop(); }
+  }
+
+  /* =========================
+     句子按鈕：綁到 .tts
+     ========================= */
+  function attachSentenceButtons(root){
+    const scope = root || document;
+    scope.querySelectorAll(".tts").forEach(textSpan => {
       let wrap = textSpan.closest(".tts-wrap");
       if (!wrap) {
         wrap = document.createElement("span");
@@ -401,24 +470,25 @@
       btn.setAttribute("aria-pressed", "false");
       btn.setAttribute("aria-label", "Play/Stop");
 
-      const lang = textSpan.getAttribute("data-lang") || DEFAULT_LANG;
-
-      // ✅ 手機：點擊就是 user gesture，先 warm voices
       btn.addEventListener("pointerdown", warmVoices, { passive: true });
-      btn.onclick = () => speak(textSpan.getAttribute("data-tts"), lang, btn);
+      btn.addEventListener("click", () => speakAuto(textSpan.getAttribute("data-tts"), btn));
 
       wrap.appendChild(btn);
     });
   }
 
   /* =========================
-     H1 右側語音小喇叭 + 展開選單
+     H1 右側（靠左）：插入語音選擇 UI
+     - EN 與 ZH 分開
      ========================= */
-  function ensureVoiceControlsOnAllH1() {
-    const container = getMainContainer();
-    const h1s = container.querySelectorAll("h1");
+  function ensureVoiceControlsOnAllH1(root){
+    const scope = root || document;
+    const container =
+      scope.querySelector(".md-content .md-content__inner") ||
+      scope.querySelector("main") ||
+      document.body;
 
-    // 若頁面沒有 H1（極少見），就不做
+    const h1s = container.querySelectorAll("h1");
     if (!h1s.length) return;
 
     h1s.forEach(h1 => {
@@ -430,73 +500,147 @@
       const toggle = document.createElement("button");
       toggle.className = "tts-voice-toggle";
       toggle.type = "button";
-      toggle.setAttribute("aria-label", "Choose voice");
-
-      // 小喇叭 SVG（不使用 emoji）
+      toggle.setAttribute("aria-label", "Choose voices");
       toggle.innerHTML = `
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 10v4c0 1.1.9 2 2 2h3l4 3V5L8 8H5c-1.1 0-2 .9-2 2zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.06c1.48-.74 2.5-2.26 2.5-4.03z"/>
         </svg>
       `;
 
-      const sel = document.createElement("select");
-      sel.className = "tts-voice-picker";
-      sel.setAttribute("aria-label", "Voice");
+      const panel = document.createElement("div");
+      panel.className = "tts-voice-panel";
 
-      // 點喇叭：展開/收起；並先 warm + populate
+      const labelEN = document.createElement("label");
+      labelEN.textContent = "EN";
+      const selEN = document.createElement("select");
+      selEN.className = "tts-voice-picker";
+      selEN.setAttribute("data-voice-kind", "en");
+
+      const labelZH = document.createElement("label");
+      labelZH.textContent = "ZH";
+      const selZH = document.createElement("select");
+      selZH.className = "tts-voice-picker";
+      selZH.setAttribute("data-voice-kind", "zh");
+
+      labelEN.appendChild(selEN);
+      labelZH.appendChild(selZH);
+
+      panel.appendChild(labelEN);
+      panel.appendChild(labelZH);
+
+      mini.appendChild(toggle);
+      mini.appendChild(panel);
+      h1.appendChild(mini);
+
+      // 點喇叭：開/關 + populate
       toggle.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
 
         warmVoices();
-        populateAllVoicePickers();
+        ensureVoiceKeys();
+        populatePickers(panel);
 
-        // 只允許一個 H1 的 picker 展開
-        document.querySelectorAll(".tts-voice-mini.open").forEach(x => {
-          if (x !== mini) x.classList.remove("open");
-        });
-
+        closeAllVoicePanelsExcept(mini);
         mini.classList.toggle("open");
 
-        // 展開後把焦點給 select（手機會直接跳出選單）
         if (mini.classList.contains("open")) {
-          // 部分手機需要延遲一下
-          setTimeout(() => { try { sel.focus(); } catch (_) {} }, 0);
+          setTimeout(() => { try { selEN.focus(); } catch(_) {} }, 0);
         }
       });
 
-      // 點選單本身：也 warm + populate（手機友善）
-      sel.addEventListener("pointerdown", warmVoices, { passive: true });
-      sel.addEventListener("focus", () => {
-        warmVoices();
-        populateAllVoicePickers();
-        mini.classList.add("open");
+      // mobile friendly：點 select 前先 warm
+      selEN.addEventListener("pointerdown", warmVoices, { passive: true });
+      selZH.addEventListener("pointerdown", warmVoices, { passive: true });
+
+      selEN.addEventListener("change", () => {
+        voiceKeyEN = selEN.value;
+        safeSetLS(LS_VOICE_EN, voiceKeyEN);
+        syncAllPickers();
       });
 
-      // 改變語音：同步全站 + 收起
-      sel.addEventListener("change", () => {
-        setVoiceIndexFromSelect(sel.value);
-        mini.classList.remove("open");
+      selZH.addEventListener("change", () => {
+        voiceKeyZH = selZH.value;
+        safeSetLS(LS_VOICE_ZH, voiceKeyZH);
+        syncAllPickers();
       });
-
-      // 點外面收起（避免一直占空間）
-      document.addEventListener("mousedown", (ev) => {
-        if (!mini.contains(ev.target)) mini.classList.remove("open");
-      }, { passive: true });
-
-      mini.appendChild(toggle);
-      mini.appendChild(sel);
-      h1.appendChild(mini);
     });
 
-    // 初次建立後先 populate（如果 voices 尚未出現也沒關係，後續 onvoiceschanged 會再補）
+    // 初次同步一次（即使 voices 還沒載入，也不會壞，onvoiceschanged 會補）
     warmVoices();
-    populateAllVoicePickers();
+    ensureVoiceKeys();
+    syncAllPickers();
+  }
+
+  function closeAllVoicePanelsExcept(mini){
+    document.querySelectorAll(".tts-voice-mini.open").forEach(x => {
+      if (x !== mini) x.classList.remove("open");
+    });
+  }
+
+  function populatePickers(panel){
+    const voices = getVoices();
+
+    const selEN = panel.querySelector('select[data-voice-kind="en"]');
+    const selZH = panel.querySelector('select[data-voice-kind="zh"]');
+
+    if (selEN) fillSelect(selEN, voices, "en", voiceKeyEN);
+    if (selZH) fillSelect(selZH, voices, "zh", voiceKeyZH);
+  }
+
+  function fillSelect(sel, voices, kind, selectedKey){
+    sel.innerHTML = "";
+
+    const filtered = (kind === "zh")
+      ? voices.filter(v => isZhLang(v.lang))
+      : voices.filter(v => isEnLang(v.lang));
+
+    const list = filtered.length ? filtered : voices;
+
+    if (!list.length) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "No voices";
+      sel.appendChild(opt);
+      return;
+    }
+
+    list.forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = voiceKey(v);
+      opt.textContent = `${v.lang} — ${v.name}`;
+      sel.appendChild(opt);
+    });
+
+    // 若目前選的 key 不在清單，先挑預設
+    const exists = list.some(v => voiceKey(v) === selectedKey);
+    if (!exists) {
+      const fallbackKey =
+        (kind === "zh")
+          ? pickDefaultVoiceKey(list, DEFAULT_LANG_ZH, DEFAULT_NAME_ZH_INCLUDES)
+          : pickDefaultVoiceKey(list, DEFAULT_LANG_EN, DEFAULT_NAME_EN_INCLUDES);
+
+      if (kind === "zh") { voiceKeyZH = fallbackKey; safeSetLS(LS_VOICE_ZH, voiceKeyZH); }
+      else { voiceKeyEN = fallbackKey; safeSetLS(LS_VOICE_EN, voiceKeyEN); }
+
+      selectedKey = fallbackKey;
+    }
+
+    sel.value = selectedKey || sel.options[0].value;
+  }
+
+  function syncAllPickers(){
+    // 讓每個 H1 的 panel 兩個 select 都一致
+    document.querySelectorAll(".tts-voice-panel").forEach(panel => {
+      populatePickers(panel);
+    });
   }
 
   /* =========================
      反白浮動工具：播放 + 翻譯
+     + 在翻譯框內選取不觸發新翻譯/不消失
      ========================= */
+
   function ensureSelectionPop() {
     let pop = document.getElementById("tts-selection-pop");
     if (pop) return pop;
@@ -521,8 +665,8 @@
       e.stopPropagation();
 
       const text = getSelectionText();
-      if (!text) { hideSelectionPop(); return; }
-      speak(text, SELECTION_LANG, btn);
+      if (!text) return; // ✅ 不強制關閉，避免你要複製時被關掉
+      speakAuto(text, btn);
     });
 
     pop.appendChild(btn);
@@ -531,8 +675,25 @@
     return pop;
   }
 
+  function getSelectionPopEl() {
+    return document.getElementById("tts-selection-pop");
+  }
+
+  function nodeInsidePop(node, pop) {
+    if (!node || !pop) return false;
+    const el = (node.nodeType === Node.TEXT_NODE) ? node.parentNode : node;
+    return !!(el && pop.contains(el));
+  }
+
+  function selectionTouchesPop() {
+    const pop = getSelectionPopEl();
+    const sel = window.getSelection ? window.getSelection() : null;
+    if (!pop || !sel || sel.rangeCount === 0) return false;
+    return nodeInsidePop(sel.anchorNode, pop) || nodeInsidePop(sel.focusNode, pop);
+  }
+
   function hideSelectionPop() {
-    const pop = document.getElementById("tts-selection-pop");
+    const pop = getSelectionPopEl();
     if (pop) pop.style.display = "none";
   }
 
@@ -579,18 +740,20 @@
   async function showSelectionPop() {
     if (!supported()) return;
 
+    // ✅ 若你正在翻譯框內反白（要複製），就完全不處理
+    if (selectionTouchesPop()) return;
+
     const text = getSelectionText();
-    if (!text) return hideSelectionPop();
+    if (!text) return; // ✅ 不主動關閉，避免干擾複製流程
 
     const rect = getSelectionRect();
-    if (!rect) return hideSelectionPop();
+    if (!rect) return;
 
     const pop = ensureSelectionPop();
     const zh = document.getElementById("tts-selection-zh");
 
     pop.style.display = "flex";
 
-    // 定位
     const offset = 8;
     const popW = pop.offsetWidth || 240;
     const popH = pop.offsetHeight || 56;
@@ -604,7 +767,6 @@
     pop.style.left = `${left}px`;
     pop.style.top  = `${top}px`;
 
-    // 翻譯
     if (zh) {
       zh.innerHTML = '<span class="muted">翻譯載入中…</span>';
       const translated = await translateToZh(text);
@@ -612,54 +774,98 @@
     }
   }
 
-  function bindSelectionEvents() {
-    document.addEventListener("mouseup", () => setTimeout(showSelectionPop, 0));
-    document.addEventListener("keyup", () => setTimeout(showSelectionPop, 0));
+  function bindGlobalEventsOnce(){
+    if (globalEventsBound) return;
+    globalEventsBound = true;
 
+    // 反白觸發（但在翻譯框內放開滑鼠不觸發）
+    document.addEventListener("mouseup", (e) => {
+      const pop = getSelectionPopEl();
+      if (pop && e.target && pop.contains(e.target)) return;
+      setTimeout(showSelectionPop, 0);
+    });
+
+    document.addEventListener("keyup", () => {
+      const pop = getSelectionPopEl();
+      if (pop && document.activeElement && pop.contains(document.activeElement)) return;
+      setTimeout(showSelectionPop, 0);
+    });
+
+    // 點外面：關閉語音面板；但不關閉翻譯框（你要複製）
     document.addEventListener("mousedown", (e) => {
-      const pop = document.getElementById("tts-selection-pop");
-      if (!pop) return;
-      if (!pop.contains(e.target)) hideSelectionPop();
+      const t = e.target;
+
+      // 關閉所有 voice panel
+      document.querySelectorAll(".tts-voice-mini.open").forEach(mini => {
+        if (!mini.contains(t)) mini.classList.remove("open");
+      });
+
+      // 翻譯框：點外面不強制關閉（你若想點外面關閉，把下一行改成啟用 hideSelectionPop）
+      // const pop = getSelectionPopEl(); if (pop && !pop.contains(t)) hideSelectionPop();
     }, { passive: true });
 
+    // 捲動/縮放：翻譯框關閉（避免位置錯）
     window.addEventListener("scroll", hideSelectionPop, true);
     window.addEventListener("resize", hideSelectionPop);
+
+    // voices 可能延遲載入：載入後同步所有 pickers
+    if ("speechSynthesis" in window) {
+      speechSynthesis.onvoiceschanged = () => {
+        ensureVoiceKeys();
+        syncAllPickers();
+      };
+    }
+
+    // Material instant navigation：換頁後重跑
+    document.addEventListener("navigation:complete", scheduleEnhance);
   }
 
   /* =========================
-     init（支援 material 的 instant navigation）
+     修正「有時候要重整才出現」：
+     - 用 MutationObserver 監看內容區
+     - 每次內容變更後，重新補齊 h1 voice UI / .tts buttons
      ========================= */
-  function init() {
+  function getContentRoot(){
+    return document.querySelector(".md-content .md-content__inner") || document.querySelector("main") || document.body;
+  }
+
+  function scheduleEnhance(){
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => {
+      scheduled = false;
+      enhance();
+    });
+  }
+
+  function enhance(){
     if (!supported()) return;
+    const root = getContentRoot();
 
-    // 1) 句子播放按鈕
-    attachSentenceButtons();
-
-    // 2) H1 右側語音控制
-    ensureVoiceControlsOnAllH1();
-
-    // 3) 反白播放 + 翻譯
+    attachSentenceButtons(root);
+    ensureVoiceControlsOnAllH1(root);
     ensureSelectionPop();
-    bindSelectionEvents();
   }
 
-  // voices 可能延遲載入：載入後補 populate
-  if ("speechSynthesis" in window) {
-    speechSynthesis.onvoiceschanged = () => {
-      populateAllVoicePickers();
-    };
+  function startObserver(){
+    if (observer) return;
+    const root = getContentRoot();
+    observer = new MutationObserver(() => scheduleEnhance());
+    observer.observe(root, { childList: true, subtree: true });
   }
 
-  // 首次載入
+  function init(){
+    if (!supported()) return;
+    bindGlobalEventsOnce();
+    warmVoices();
+    enhance();
+    startObserver();
+  }
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
     init();
   }
-
-  // Material instant navigation：換頁後要重掛
-  document.addEventListener("navigation:complete", () => {
-    init();
-  });
 })();
 </script>
