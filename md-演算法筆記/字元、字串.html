@@ -377,6 +377,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 <!-- google 朗讀和翻譯 -->
+<!--
+把整段放進你的 tts.md（snippets）即可
+這版改成「自製 dropdown」：不使用原生 <select> 的下拉浮層，所以不會再跑出視窗外。
+
+功能：
+- 句子後面播放鍵（用 CSS 畫圖示，不用 ▶/■ 文字）
+- 反白任意文字：跳出「播放 + 中文翻譯」
+- 點外面：翻譯框會消失；點在翻譯框內不會消失；在翻譯框內反白也不會觸發翻譯
+- Header 右上角（放在 .md-header__ellipsis 內靠右）提供 EN / ZH 兩個語音 dropdown，分開選
+- 中文用中文語音、英文用英文語音（自動切分）
+- 修正「有時候要重整才會出現」：支援 Material instant navigation + retry + MutationObserver
+-->
+
 <style>
 /* =========================
    句子 TTS：文字 + 按鈕（避免 st/nd 跑位）
@@ -384,7 +397,7 @@ document.addEventListener("DOMContentLoaded", function() {
 .tts-wrap{
   display: inline-flex;
   align-items: center;
-  gap: 10px;                 /* 可改：按鈕與文字距離 */
+  gap: 10px;                 /* ✅ 可改：按鈕與文字距離 */
 }
 .tts{ display: inline; }
 
@@ -396,8 +409,8 @@ document.addEventListener("DOMContentLoaded", function() {
   border: 0;
   font: inherit;
 
-  width: 44px;               /* 可改：點擊區寬 */
-  height: 44px;              /* 可改：點擊區高 */
+  width: 44px;               /* ✅ 可改：點擊區寬 */
+  height: 44px;              /* ✅ 可改：點擊區高 */
   padding: 0;
 
   cursor: pointer;
@@ -415,7 +428,7 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 .tts-btn[aria-pressed="true"]{
   color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
-  opacity: 0.85;             /* 可改：播放中提示 */
+  opacity: 0.85;             /* ✅ 可改：播放中提示 */
 }
 .tts-btn:focus-visible{
   outline: 2px solid var(--md-accent-fg-color, currentColor);
@@ -430,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function() {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 9px 0 9px 14px;   /* 可改：三角形比例 */
+  border-width: 9px 0 9px 14px;   /* ✅ 可改：三角形比例 */
   border-color: transparent transparent transparent currentColor;
   transform: translateX(1px);
 }
@@ -438,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function() {
 .tts-btn[data-state="stop"]::before{
   content: "";
   display: block;
-  width: 16px;                    /* 可改：方塊大小 */
+  width: 16px;                    /* ✅ 可改：方塊大小 */
   height: 16px;
   background: currentColor;
   border-radius: 3px;
@@ -452,10 +465,8 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 
 /* =========================
-   Header：把「選語音按鈕」塞進 .md-header__ellipsis 並靠右
+   Header：塞進 .md-header__ellipsis 並靠右
    ========================= */
-
-/* 只在我們加上 class 後才套用，避免影響原主題 */
 .md-header__ellipsis.tts-ellipsis-flex{
   display: flex;
   align-items: center;
@@ -468,14 +479,14 @@ document.addEventListener("DOMContentLoaded", function() {
   margin-left: auto;              /* ✅ 靠右 */
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 1rem;                /* ✅ 與內文一致 */
+  gap: 10px;
+  font-size: 1rem;                /* ✅ 文字大小跟內文一致 */
   line-height: 1.2;
 }
 
-/* header 小喇叭按鈕（只放在 ellipsis 裡；面板用 portal 到 body，避免被 overflow: hidden 截掉） */
+/* 小喇叭按鈕 */
 #tts-header-voice-toggle{
-  width: 30px;                    /* 可改：喇叭大小 */
+  width: 30px;                    /* ✅ 可改：喇叭大小 */
   height: 30px;
   border-radius: 999px;
   border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.2));
@@ -484,6 +495,7 @@ document.addEventListener("DOMContentLoaded", function() {
   cursor: pointer;
   display: inline-grid;
   place-items: center;
+  flex: 0 0 auto;
 }
 #tts-header-voice-toggle:hover{
   color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
@@ -500,14 +512,14 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 
 /* =========================
-   語音選擇面板（Portal 到 body，避免 header overflow 截斷）
+   Voice Panel（Portal 到 body）+ 自製 dropdown
    ========================= */
 #tts-voice-panel-portal{
   position: fixed;
   z-index: 9998;
   display: none;
 
-  min-width: min(420px, 92vw);
+  min-width: min(520px, 92vw);
   padding: 10px 12px;
   border-radius: 14px;
 
@@ -515,59 +527,113 @@ document.addEventListener("DOMContentLoaded", function() {
   border: 1px solid var(--md-default-fg-color--lightest, rgba(255,255,255,.18));
   box-shadow: 0 10px 30px rgba(0,0,0,.25);
 
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-
   font-size: 1rem;                 /* ✅ 與內文一致 */
   font-weight: normal;
 
   /* ✅ 不超出視窗 */
   max-width: calc(100vw - 16px);
   box-sizing: border-box;
-  max-height: min(60vh, calc(100vh - 120px)); /* 可改 */
+
+  max-height: min(60vh, calc(100vh - 120px)); /* ✅ 可改 */
   overflow: auto;
   overscroll-behavior: contain;
-
-  transform-origin: top right;
 }
 #tts-voice-panel-portal.open{
-  display: flex;
+  display: block;
   animation: ttsPopIn .12s ease-out;
 }
 @keyframes ttsPopIn{
-  from{ transform: scale(.96); opacity: .0; }
+  from{ transform: scale(.98); opacity: .0; }
   to  { transform: scale(1); opacity: 1; }
 }
 
-#tts-voice-panel-portal label{
+/* panel 內排版 */
+.tts-vp-row{
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  align-items: start;
+  gap: 10px;
+  margin: 6px 0;
+}
+.tts-vp-row .lbl{
+  color: var(--md-default-fg-color, #ddd);
+  padding-top: 6px;
+  user-select: none;
+}
+
+/* dropdown button */
+.tts-dd-btn{
+  width: 100%;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  color: var(--md-default-fg-color, #ddd);
-}
+  justify-content: space-between;
+  gap: 10px;
 
-.tts-voice-picker{
   font: inherit;
   font-size: 1rem;
+  padding: 8px 10px;
   border-radius: 10px;
-  border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.2));
+  border: 1px solid var(--md-default-fg-color--lightest, rgba(255,255,255,.18));
   background: transparent;
   color: inherit;
-  padding: 6px 10px;
-  max-width: min(320px, 80vw);
+  cursor: pointer;
+
+  text-align: left;
+}
+.tts-dd-btn:hover{
+  border-color: var(--md-accent-fg-color, rgba(255,255,255,.35));
+}
+.tts-dd-btn:focus-visible{
+  outline: 2px solid var(--md-accent-fg-color, currentColor);
+  outline-offset: 2px;
+}
+.tts-dd-btn .chev{
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  opacity: .85;
+  flex: 0 0 auto;
 }
 
-/* 你的 scheme 是 slate：下拉黑底 */
-[data-md-color-scheme="slate"] .tts-voice-picker{
-  background-color: #1e1e1e;
-  color: #fff;
-  border-color: rgba(255,255,255,.25);
+/* dropdown list（展開在 panel 內，永遠不會跑出視窗） */
+.tts-dd-list{
+  margin-top: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--md-default-fg-color--lightest, rgba(255,255,255,.18));
+  background: rgba(0,0,0,.18);
+  overflow: auto;
+
+  max-height: min(42vh, 320px); /* ✅ 可改：清單高度 */
+  display: none;
 }
-[data-md-color-scheme="slate"] .tts-voice-picker option{
-  background-color: #1e1e1e;
-  color: #fff;
+.tts-dd.open .tts-dd-list{ display: block; }
+
+.tts-dd-item{
+  padding: 10px 10px;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1.25;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.tts-dd-item:last-child{ border-bottom: 0; }
+.tts-dd-item:hover{
+  background: rgba(255,255,255,.10);
+}
+.tts-dd-item.active{
+  background: rgba(255,255,255,.16);
+  outline: 1px solid rgba(255,255,255,.18);
+}
+
+/* dracula：清單/按鈕更黑一點（你指定 scheme=dracula） */
+[data-md-color-scheme="dracula"] #tts-voice-panel-portal{
+  background: #1b1d24;
+  border-color: rgba(255,255,255,.18);
+}
+[data-md-color-scheme="dracula"] .tts-dd-list{
+  background: #13151b;
+  border-color: rgba(255,255,255,.18);
 }
 
 /* =========================
@@ -608,9 +674,9 @@ document.addEventListener("DOMContentLoaded", function() {
     return;
   }
 
-  /* ==============
+  /* =========================
      你可以改的地方
-     ============== */
+     ========================= */
   const DEFAULT_LANG_EN = "en-US";
   const DEFAULT_NAME_EN_INCLUDES = "Google US English";
 
@@ -620,7 +686,10 @@ document.addEventListener("DOMContentLoaded", function() {
   const SELECTION_MAX_CHARS = 500;
   const TRANSLATE_TO = "zh-TW";
   const TRANSLATE_FROM = "en"; // 也可改 "auto"
-  /* ============== */
+
+  // ✅ 可改：清單太長時，最多渲染幾個（避免超卡）
+  const MAX_VOICES_RENDER = 2000;
+  /* ========================= */
 
   let currentBtn = null;
   let activeUtterances = [];
@@ -651,7 +720,6 @@ document.addEventListener("DOMContentLoaded", function() {
   function warmVoices() {
     try { speechSynthesis.getVoices(); } catch (_) {}
   }
-
   function getVoices() {
     return speechSynthesis.getVoices() || [];
   }
@@ -660,13 +728,10 @@ document.addEventListener("DOMContentLoaded", function() {
     if (v && v.voiceURI) return "uri:" + v.voiceURI;
     return "nl:" + (v.lang || "") + "||" + (v.name || "");
   }
-
   function findVoiceByKey(key){
     if (!key) return null;
     const voices = getVoices();
-    for (const v of voices) {
-      if (voiceKey(v) === key) return v;
-    }
+    for (const v of voices) if (voiceKey(v) === key) return v;
     return null;
   }
 
@@ -674,7 +739,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const l = (lang || "").toLowerCase();
     return l.startsWith("zh");
   }
-
   function isEnLang(lang){
     const l = (lang || "").toLowerCase();
     return l.startsWith("en");
@@ -707,14 +771,16 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!voices.length) return;
 
     if (!voiceKeyEN || !findVoiceByKey(voiceKeyEN)) {
-      voiceKeyEN = pickDefaultVoiceKey(voices.filter(v => isEnLang(v.lang)), DEFAULT_LANG_EN, DEFAULT_NAME_EN_INCLUDES)
-                || pickDefaultVoiceKey(voices, DEFAULT_LANG_EN, DEFAULT_NAME_EN_INCLUDES);
+      voiceKeyEN =
+        pickDefaultVoiceKey(voices.filter(v => isEnLang(v.lang)), DEFAULT_LANG_EN, DEFAULT_NAME_EN_INCLUDES)
+        || pickDefaultVoiceKey(voices, DEFAULT_LANG_EN, DEFAULT_NAME_EN_INCLUDES);
       if (voiceKeyEN) safeSetLS(LS_VOICE_EN, voiceKeyEN);
     }
 
     if (!voiceKeyZH || !findVoiceByKey(voiceKeyZH)) {
-      voiceKeyZH = pickDefaultVoiceKey(voices.filter(v => isZhLang(v.lang)), DEFAULT_LANG_ZH, DEFAULT_NAME_ZH_INCLUDES)
-                || pickDefaultVoiceKey(voices, DEFAULT_LANG_ZH, DEFAULT_NAME_ZH_INCLUDES);
+      voiceKeyZH =
+        pickDefaultVoiceKey(voices.filter(v => isZhLang(v.lang)), DEFAULT_LANG_ZH, DEFAULT_NAME_ZH_INCLUDES)
+        || pickDefaultVoiceKey(voices, DEFAULT_LANG_ZH, DEFAULT_NAME_ZH_INCLUDES);
       if (voiceKeyZH) safeSetLS(LS_VOICE_ZH, voiceKeyZH);
     }
   }
@@ -750,7 +816,6 @@ document.addEventListener("DOMContentLoaded", function() {
       if (t) out.push({ lang: cur || "en", text: t });
       buf = "";
     }
-
     function charType(ch){
       if (/[\u4e00-\u9fff\u3400-\u4dbf]/.test(ch)) return "zh";
       if (/[A-Za-z]/.test(ch)) return "en";
@@ -763,7 +828,6 @@ document.addEventListener("DOMContentLoaded", function() {
       const lang = (t === "other") ? (cur || "en") : t;
 
       if (cur === null) cur = lang;
-
       if (lang !== cur){
         flush();
         cur = lang;
@@ -771,8 +835,7 @@ document.addEventListener("DOMContentLoaded", function() {
       buf += ch;
     }
     flush();
-
-    return out.length ? out : [{ lang: "en", text: (s.trim()) }];
+    return out.length ? out : [{ lang: "en", text: s.trim() }];
   }
 
   function speakAuto(text, btn){
@@ -797,7 +860,7 @@ document.addEventListener("DOMContentLoaded", function() {
     activeUtterances = segs.map(seg => {
       const u = new SpeechSynthesisUtterance(seg.text);
 
-      /* 可改：語速/音高 */
+      /* ✅ 可改：語速/音高 */
       u.rate = 1.0;
       u.pitch = 1.0;
 
@@ -860,8 +923,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   /* =========================
-     Header：在 .md-header__ellipsis 插入按鈕（靠右）
-     面板 portal 到 body，避免被 header overflow 截掉
+     Header：塞進 .md-header__ellipsis
      ========================= */
   function getHeaderEllipsis(){
     return document.querySelector(".md-header__ellipsis");
@@ -901,6 +963,9 @@ document.addEventListener("DOMContentLoaded", function() {
     return true;
   }
 
+  /* =========================
+     Voice Panel：自製 dropdown（不使用 <select>）
+     ========================= */
   function ensureVoicePanelPortal(){
     let panel = document.getElementById("tts-voice-panel-portal");
     if (panel) return panel;
@@ -908,91 +973,137 @@ document.addEventListener("DOMContentLoaded", function() {
     panel = document.createElement("div");
     panel.id = "tts-voice-panel-portal";
 
-    const labelEN = document.createElement("label");
-    labelEN.textContent = "EN";
-    const selEN = document.createElement("select");
-    selEN.className = "tts-voice-picker";
-    selEN.setAttribute("data-voice-kind", "en");
-    labelEN.appendChild(selEN);
+    panel.appendChild(makeDropdownRow("EN", "en"));
+    panel.appendChild(makeDropdownRow("ZH", "zh"));
 
-    const labelZH = document.createElement("label");
-    labelZH.textContent = "ZH";
-    const selZH = document.createElement("select");
-    selZH.className = "tts-voice-picker";
-    selZH.setAttribute("data-voice-kind", "zh");
-    labelZH.appendChild(selZH);
-
-    panel.appendChild(labelEN);
-    panel.appendChild(labelZH);
     document.body.appendChild(panel);
-
-    selEN.addEventListener("pointerdown", warmVoices, { passive: true });
-    selZH.addEventListener("pointerdown", warmVoices, { passive: true });
-
-    selEN.addEventListener("change", () => {
-      voiceKeyEN = selEN.value;
-      safeSetLS(LS_VOICE_EN, voiceKeyEN);
-      syncVoicePanel();
-    });
-    selZH.addEventListener("change", () => {
-      voiceKeyZH = selZH.value;
-      safeSetLS(LS_VOICE_ZH, voiceKeyZH);
-      syncVoicePanel();
-    });
-
     return panel;
   }
 
-  function fillSelect(sel, voices, kind, selectedKey){
-    sel.innerHTML = "";
+  function makeDropdownRow(label, kind){
+    const row = document.createElement("div");
+    row.className = "tts-vp-row";
+
+    const lbl = document.createElement("div");
+    lbl.className = "lbl";
+    lbl.textContent = label;
+
+    const dd = document.createElement("div");
+    dd.className = "tts-dd";
+    dd.setAttribute("data-kind", kind);
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "tts-dd-btn";
+    btn.innerHTML = `<span class="txt">Loading…</span><span class="chev"></span>`;
+    btn.addEventListener("pointerdown", warmVoices, { passive: true });
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleDropdown(kind);
+    });
+
+    const list = document.createElement("div");
+    list.className = "tts-dd-list";
+
+    dd.appendChild(btn);
+    dd.appendChild(list);
+
+    row.appendChild(lbl);
+    row.appendChild(dd);
+    return row;
+  }
+
+  function closeAllDropdowns(){
+    document.querySelectorAll("#tts-voice-panel-portal .tts-dd.open").forEach(x => x.classList.remove("open"));
+  }
+
+  function toggleDropdown(kind){
+    const panel = document.getElementById("tts-voice-panel-portal");
+    if (!panel) return;
+    const dd = panel.querySelector(`.tts-dd[data-kind="${kind}"]`);
+    if (!dd) return;
+
+    const isOpen = dd.classList.contains("open");
+    closeAllDropdowns();
+    if (!isOpen) dd.classList.add("open");
+  }
+
+  function voiceLabel(v){
+    return `${v.lang} — ${v.name}`;
+  }
+
+  function syncVoiceDropdowns(){
+    const panel = document.getElementById("tts-voice-panel-portal");
+    if (!panel) return;
+
+    const voices = getVoices();
+    ensureVoiceKeys();
+
+    const ddEN = panel.querySelector('.tts-dd[data-kind="en"]');
+    const ddZH = panel.querySelector('.tts-dd[data-kind="zh"]');
+
+    if (ddEN) fillDropdown(ddEN, voices, "en", voiceKeyEN);
+    if (ddZH) fillDropdown(ddZH, voices, "zh", voiceKeyZH);
+  }
+
+  function fillDropdown(dd, voices, kind, selectedKey){
+    const btnTxt = dd.querySelector(".tts-dd-btn .txt");
+    const list = dd.querySelector(".tts-dd-list");
+
+    list.innerHTML = "";
 
     const filtered = (kind === "zh")
       ? voices.filter(v => isZhLang(v.lang))
       : voices.filter(v => isEnLang(v.lang));
 
-    const list = filtered.length ? filtered : voices;
+    const listVoices = filtered.length ? filtered : voices;
+    const trimmed = listVoices.slice(0, MAX_VOICES_RENDER);
 
-    if (!list.length) {
-      const opt = document.createElement("option");
-      opt.value = "";
-      opt.textContent = "No voices";
-      sel.appendChild(opt);
-      return;
-    }
-
-    list.forEach(v => {
-      const opt = document.createElement("option");
-      opt.value = voiceKey(v);
-      opt.textContent = `${v.lang} — ${v.name}`;
-      sel.appendChild(opt);
-    });
-
-    const exists = list.some(v => voiceKey(v) === selectedKey);
+    // 若目前 key 不存在，補 fallback
+    const exists = trimmed.some(v => voiceKey(v) === selectedKey) || listVoices.some(v => voiceKey(v) === selectedKey);
     if (!exists) {
       const fallbackKey =
         (kind === "zh")
-          ? pickDefaultVoiceKey(list, DEFAULT_LANG_ZH, DEFAULT_NAME_ZH_INCLUDES)
-          : pickDefaultVoiceKey(list, DEFAULT_LANG_EN, DEFAULT_NAME_EN_INCLUDES);
+          ? pickDefaultVoiceKey(listVoices, DEFAULT_LANG_ZH, DEFAULT_NAME_ZH_INCLUDES)
+          : pickDefaultVoiceKey(listVoices, DEFAULT_LANG_EN, DEFAULT_NAME_EN_INCLUDES);
 
-      if (kind === "zh") { voiceKeyZH = fallbackKey; safeSetLS(LS_VOICE_ZH, voiceKeyZH); }
-      else { voiceKeyEN = fallbackKey; safeSetLS(LS_VOICE_EN, voiceKeyEN); }
-
-      selectedKey = fallbackKey;
+      if (kind === "zh") { voiceKeyZH = fallbackKey; safeSetLS(LS_VOICE_ZH, voiceKeyZH); selectedKey = voiceKeyZH; }
+      else { voiceKeyEN = fallbackKey; safeSetLS(LS_VOICE_EN, voiceKeyEN); selectedKey = voiceKeyEN; }
     }
 
-    sel.value = selectedKey || sel.options[0].value;
-  }
+    const selectedVoice = findVoiceByKey(selectedKey) || listVoices[0] || null;
+    if (btnTxt) btnTxt.textContent = selectedVoice ? voiceLabel(selectedVoice) : "No voices";
 
-  function syncVoicePanel(){
-    const panel = document.getElementById("tts-voice-panel-portal");
-    if (!panel) return;
+    // items
+    if (!trimmed.length) {
+      const it = document.createElement("div");
+      it.className = "tts-dd-item";
+      it.textContent = "No voices";
+      list.appendChild(it);
+      return;
+    }
 
-    const voices = getVoices();
-    const selEN = panel.querySelector('select[data-voice-kind="en"]');
-    const selZH = panel.querySelector('select[data-voice-kind="zh"]');
+    trimmed.forEach(v => {
+      const k = voiceKey(v);
+      const it = document.createElement("div");
+      it.className = "tts-dd-item" + (k === selectedKey ? " active" : "");
+      it.textContent = voiceLabel(v);
 
-    if (selEN) fillSelect(selEN, voices, "en", voiceKeyEN);
-    if (selZH) fillSelect(selZH, voices, "zh", voiceKeyZH);
+      it.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (kind === "zh") { voiceKeyZH = k; safeSetLS(LS_VOICE_ZH, voiceKeyZH); }
+        else { voiceKeyEN = k; safeSetLS(LS_VOICE_EN, voiceKeyEN); }
+
+        // 更新兩個 dropdown 顯示 + 關閉清單
+        syncVoiceDropdowns();
+        closeAllDropdowns();
+      });
+
+      list.appendChild(it);
+    });
   }
 
   function hideVoicePanel(){
@@ -1000,6 +1111,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!panel) return;
     panel.classList.remove("open");
     panel.style.display = "none";
+    closeAllDropdowns();
   }
 
   function openOrToggleVoicePanel(anchorBtn){
@@ -1012,15 +1124,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     warmVoices();
     ensureVoiceKeys();
-    syncVoicePanel();
+    syncVoiceDropdowns();
 
-    panel.style.display = "flex";
+    panel.style.display = "block";
     panel.classList.add("open");
+    closeAllDropdowns();
 
     requestAnimationFrame(() => positionVoicePanel(anchorBtn, panel));
   }
 
-  // ✅ 讓面板不超出視窗：必要時往內推、或改成向上開
+  // ✅ 面板不超出視窗（右對齊按鈕；下方不夠就向上開；永遠夾在 viewport）
   function positionVoicePanel(anchorBtn, panel){
     if (!anchorBtn || !panel) return;
 
@@ -1028,12 +1141,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const gap = 8;
     const r = anchorBtn.getBoundingClientRect();
 
-    // 先放「右對齊 + 向下開」
-    panel.style.left = "0px";
-    panel.style.top = "0px";
-
-    const w = panel.offsetWidth || 320;
-    const h = panel.offsetHeight || 120;
+    // 先量實際尺寸（display=block 才準）
+    const w = panel.offsetWidth || 360;
+    const h = panel.offsetHeight || 160;
 
     let left = r.right - w;           // 右對齊按鈕
     let top  = r.bottom + gap;        // 向下開
@@ -1042,11 +1152,11 @@ document.addEventListener("DOMContentLoaded", function() {
     if (left < margin) left = margin;
     if (left + w > window.innerWidth - margin) left = window.innerWidth - margin - w;
 
-    // 下方溢出就改向上開
+    // 下方溢出改向上開
     if (top + h > window.innerHeight - margin) {
       top = r.top - gap - h;
     }
-    // 上方也溢出就夾在視窗內
+    // 上方也溢出就夾住
     if (top < margin) top = margin;
 
     panel.style.left = left + "px";
@@ -1099,6 +1209,7 @@ document.addEventListener("DOMContentLoaded", function() {
     return !!(el && pop.contains(el));
   }
 
+  // ✅ 在翻譯框內反白：不觸發翻譯、不關閉
   function selectionTouchesPop() {
     const pop = getSelectionPopEl();
     const sel = window.getSelection ? window.getSelection() : null;
@@ -1154,7 +1265,6 @@ document.addEventListener("DOMContentLoaded", function() {
   async function showSelectionPop() {
     if (!supported()) return;
 
-    // ✅ 在翻譯框內選取文字（要複製）就不重新翻譯、不關閉
     if (selectionTouchesPop()) return;
 
     const text = getSelectionText();
@@ -1207,20 +1317,19 @@ document.addEventListener("DOMContentLoaded", function() {
       setTimeout(showSelectionPop, 0);
     });
 
-    // ✅ 點外面：關語音面板；點外面也關翻譯框（點在翻譯框內不關）
+    // 點外面：關 voice panel / dropdown；點外面也關翻譯框（點在翻譯框內不關）
     document.addEventListener("mousedown", (e) => {
       const t = e.target;
 
-      // voice panel（portal）點外面關
       const panel = document.getElementById("tts-voice-panel-portal");
       const toggle = document.getElementById("tts-header-voice-toggle");
       if (panel && panel.classList.contains("open")) {
         const insidePanel = panel.contains(t);
         const insideToggle = toggle && toggle.contains(t);
         if (!insidePanel && !insideToggle) hideVoicePanel();
+        if (insidePanel && !t.closest(".tts-dd")) closeAllDropdowns();
       }
 
-      // selection pop：點外面關
       const pop = getSelectionPopEl();
       if (pop && t && !pop.contains(t)) hideSelectionPop();
     }, { passive: true });
@@ -1236,15 +1345,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.addEventListener("scroll", hideSelectionPop, true);
 
-    // voices 可能延遲載入：載入後同步下拉
+    // voices 可能延遲載入：載入後同步 dropdown
     if ("speechSynthesis" in window) {
       speechSynthesis.onvoiceschanged = () => {
         ensureVoiceKeys();
-        syncVoicePanel();
+        syncVoiceDropdowns();
       };
     }
 
-    // Material for MkDocs instant nav：最可靠 hook
+    // Material instant nav：最可靠 hook
     if (window.document$ && typeof window.document$.subscribe === "function") {
       window.document$.subscribe(() => scheduleEnhance(true));
     }
@@ -1266,9 +1375,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const root = getContentRoot();
     attachSentenceButtons(root);
 
-    // header：語音按鈕（靠右）
+    // header：語音按鈕（靠右）+ panel
     ensureHeaderControl();
     ensureVoicePanelPortal();
+    syncVoiceDropdowns();
 
     // selection pop
     ensureSelectionPop();
@@ -1282,7 +1392,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const hasHeaderBtn = !!document.getElementById("tts-header-control");
     const ready = !!ellipsis && hasHeaderBtn;
 
-    if (!ready && tries < 12) {
+    if (!ready && tries < 14) {
       setTimeout(() => enhanceWithRetry(tries + 1), 120);
     }
   }
@@ -1295,7 +1405,6 @@ document.addEventListener("DOMContentLoaded", function() {
       scheduled = false;
       warmVoices();
       ensureVoiceKeys();
-      syncVoicePanel();
       enhanceWithRetry(0);
       startObserver();
     });
