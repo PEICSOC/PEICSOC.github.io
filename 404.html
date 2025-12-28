@@ -378,7 +378,7 @@ document.addEventListener("DOMContentLoaded", function() {
 .tts-wrap{
   display: inline-flex;
   align-items: center;
-  gap: 10px;                 /* ✅ 可改：按鈕與文字距離 */
+  gap: 10px;                 /* 可改：按鈕與文字距離 */
 }
 .tts{ display: inline; }
 
@@ -390,8 +390,8 @@ document.addEventListener("DOMContentLoaded", function() {
   border: 0;
   font: inherit;
 
-  width: 44px;               /* ✅ 可改：點擊區寬 */
-  height: 44px;              /* ✅ 可改：點擊區高 */
+  width: 44px;               /* 可改：點擊區寬 */
+  height: 44px;              /* 可改：點擊區高 */
   padding: 0;
 
   cursor: pointer;
@@ -409,7 +409,7 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 .tts-btn[aria-pressed="true"]{
   color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
-  opacity: 0.85;             /* ✅ 可改：播放中提示 */
+  opacity: 0.85;             /* 可改：播放中提示 */
 }
 .tts-btn:focus-visible{
   outline: 2px solid var(--md-accent-fg-color, currentColor);
@@ -424,16 +424,15 @@ document.addEventListener("DOMContentLoaded", function() {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 9px 0 9px 14px;   /* ✅ 可改：三角形比例 */
+  border-width: 9px 0 9px 14px;   /* 可改：三角形比例 */
   border-color: transparent transparent transparent currentColor;
   transform: translateX(1px);
 }
-
 /* 停止：方塊 */
 .tts-btn[data-state="stop"]::before{
   content: "";
   display: block;
-  width: 16px;                    /* ✅ 可改：方塊大小 */
+  width: 16px;                    /* 可改：方塊大小 */
   height: 16px;
   background: currentColor;
   border-radius: 3px;
@@ -447,27 +446,30 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 
 /* =========================
-   H1 右邊（靠左）：語音選擇小按鈕 + 展開面板
+   Header：把「選語音按鈕」塞進 .md-header__ellipsis 並靠右
    ========================= */
-/* 不改 h1 佈局（不靠頁面最右），只在文字後插一個 inline 控制 */
-.tts-voice-mini{
+
+/* 只在我們加上 class 後才套用，避免影響原主題 */
+.md-header__ellipsis.tts-ellipsis-flex{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* 我們插入的 header 控制容器 */
+#tts-header-control{
+  margin-left: auto;              /* ✅ 靠右 */
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-left: 10px;
-
-  /* ✅ 讓語音 UI 不跟著 h1 的大字體走，大小跟內文一致 */
-  font-size: 1rem;
-  font-weight: normal;
+  font-size: 1rem;                /* ✅ 與內文一致 */
   line-height: 1.2;
-
-  vertical-align: middle;
-  position: relative; /* popover 參考點 */
 }
 
-/* 小喇叭按鈕 */
-.tts-voice-toggle{
-  width: 30px;                /* ✅ 可改：喇叭大小 */
+/* header 小喇叭按鈕（只放在 ellipsis 裡；面板用 portal 到 body，避免被 overflow: hidden 截掉） */
+#tts-header-voice-toggle{
+  width: 30px;                    /* 可改：喇叭大小 */
   height: 30px;
   border-radius: 999px;
   border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.2));
@@ -477,21 +479,27 @@ document.addEventListener("DOMContentLoaded", function() {
   display: inline-grid;
   place-items: center;
 }
-.tts-voice-toggle:hover{
+#tts-header-voice-toggle:hover{
   color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
 }
-.tts-voice-toggle:focus-visible{
+#tts-header-voice-toggle:focus-visible{
   outline: 2px solid var(--md-accent-fg-color, currentColor);
   outline-offset: 2px;
 }
-.tts-voice-toggle svg{ width: 16px; height: 16px; display:block; fill: currentColor; }
+#tts-header-voice-toggle svg{
+  width: 16px;
+  height: 16px;
+  display:block;
+  fill: currentColor;
+}
 
-/* 展開面板（預設隱藏，點選才出現） */
-.tts-voice-panel{
-  position: absolute;
-  left: 0;
-  top: calc(100% + 8px);
-  z-index: 50;
+/* =========================
+   語音選擇面板（Portal 到 body，避免 header overflow 截斷）
+   ========================= */
+#tts-voice-panel-portal{
+  position: fixed;
+  z-index: 9998;
+  display: none;
 
   min-width: min(420px, 92vw);
   padding: 10px 12px;
@@ -501,17 +509,32 @@ document.addEventListener("DOMContentLoaded", function() {
   border: 1px solid var(--md-default-fg-color--lightest, rgba(255,255,255,.18));
   box-shadow: 0 10px 30px rgba(0,0,0,.25);
 
-  display: none;
   gap: 10px;
   flex-wrap: wrap;
+  align-items: center;
 
-  /* ✅ 面板文字大小同內文 */
-  font-size: 1rem;
+  font-size: 1rem;                 /* ✅ 與內文一致 */
   font-weight: normal;
-}
-.tts-voice-mini.open .tts-voice-panel{ display: flex; }
 
-.tts-voice-panel label{
+  /* ✅ 不超出視窗 */
+  max-width: calc(100vw - 16px);
+  box-sizing: border-box;
+  max-height: min(60vh, calc(100vh - 120px)); /* 可改 */
+  overflow: auto;
+  overscroll-behavior: contain;
+
+  transform-origin: top right;
+}
+#tts-voice-panel-portal.open{
+  display: flex;
+  animation: ttsPopIn .12s ease-out;
+}
+@keyframes ttsPopIn{
+  from{ transform: scale(.96); opacity: .0; }
+  to  { transform: scale(1); opacity: 1; }
+}
+
+#tts-voice-panel-portal label{
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -519,10 +542,9 @@ document.addEventListener("DOMContentLoaded", function() {
   color: var(--md-default-fg-color, #ddd);
 }
 
-/* 兩個下拉：EN / ZH */
 .tts-voice-picker{
   font: inherit;
-  font-size: 1rem;            /* ✅ 跟內文一致 */
+  font-size: 1rem;
   border-radius: 10px;
   border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.2));
   background: transparent;
@@ -531,7 +553,7 @@ document.addEventListener("DOMContentLoaded", function() {
   max-width: min(320px, 80vw);
 }
 
-/* 暗色模式 slate：下拉黑底 */
+/* 你的 scheme 是 slate：下拉黑底 */
 [data-md-color-scheme="slate"] .tts-voice-picker{
   background-color: #1e1e1e;
   color: #fff;
@@ -574,39 +596,39 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <script>
 (function () {
+  // 避免 include 多次造成重複綁定 / 偶發「要重整才出現」
+  if (window.__TTS_TOOLKIT__ && typeof window.__TTS_TOOLKIT__.scheduleEnhance === "function") {
+    window.__TTS_TOOLKIT__.scheduleEnhance();
+    return;
+  }
+
   /* ==============
      你可以改的地方
      ============== */
+  const DEFAULT_LANG_EN = "en-US";
+  const DEFAULT_NAME_EN_INCLUDES = "Google US English";
 
-  const DEFAULT_LANG_EN = "en-US";                      // ✅ 可改：英文預設語言
-  const DEFAULT_NAME_EN_INCLUDES = "Google US English"; // ✅ 可改：英文預設 voice 關鍵字
+  const DEFAULT_LANG_ZH = "zh-TW";
+  const DEFAULT_NAME_ZH_INCLUDES = "Google";
 
-  const DEFAULT_LANG_ZH = "zh-TW";                      // ✅ 可改：中文預設語言（繁中）
-  const DEFAULT_NAME_ZH_INCLUDES = "Google";            // ✅ 可改：中文預設 voice 關鍵字（你也可填 "Microsoft" 等）
-
-  const SELECTION_MAX_CHARS = 500;                      // ✅ 你指定：反白最多 500 字
-  const TRANSLATE_TO = "zh-TW";                         // ✅ 可改
-  const TRANSLATE_FROM = "en";                          // ✅ 可改："auto" 也可，但英文練習建議 en
-
-  /* ==============
-     內部狀態
-     ============== */
+  const SELECTION_MAX_CHARS = 500;
+  const TRANSLATE_TO = "zh-TW";
+  const TRANSLATE_FROM = "en"; // 也可改 "auto"
+  /* ============== */
 
   let currentBtn = null;
-  let activeUtterances = []; // 用於混合中英分段朗讀
-  let isSpeaking = false;
-
+  let activeUtterances = [];
   const translateCache = new Map();
 
-  // 用「key」儲存語音，避免不同瀏覽器 index 變動
+  // 用 key 儲存語音（比 index 穩定）
   const LS_VOICE_EN = "ttsVoiceKeyEN";
   const LS_VOICE_ZH = "ttsVoiceKeyZH";
   let voiceKeyEN = safeGetLS(LS_VOICE_EN);
   let voiceKeyZH = safeGetLS(LS_VOICE_ZH);
 
-  // Global：避免重複綁事件
   let globalEventsBound = false;
   let observer = null;
+  let observerTarget = null;
   let scheduled = false;
 
   function safeGetLS(key){
@@ -629,7 +651,6 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function voiceKey(v){
-    // voiceURI 在多數瀏覽器較穩；沒有就用 lang+name
     if (v && v.voiceURI) return "uri:" + v.voiceURI;
     return "nl:" + (v.lang || "") + "||" + (v.name || "");
   }
@@ -659,19 +680,15 @@ document.addEventListener("DOMContentLoaded", function() {
     const needle = (nameIncludes || "").toLowerCase();
     const langN = (langNeedle || "").toLowerCase();
 
-    // 1) lang match + name includes
     let v = voices.find(x => (x.lang||"").toLowerCase() === langN && (x.name||"").toLowerCase().includes(needle));
     if (v) return voiceKey(v);
 
-    // 2) name includes
     v = voices.find(x => (x.name||"").toLowerCase().includes(needle));
     if (v) return voiceKey(v);
 
-    // 3) lang exact
     v = voices.find(x => (x.lang||"").toLowerCase() === langN);
     if (v) return voiceKey(v);
 
-    // 4) prefix match (en-* / zh-*)
     const prefix = langN.split("-")[0];
     v = voices.find(x => (x.lang||"").toLowerCase().startsWith(prefix));
     if (v) return voiceKey(v);
@@ -697,20 +714,14 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function getVoiceForLangTag(tag){
-    // tag: "en" | "zh"
     ensureVoiceKeys();
     if (tag === "zh") return findVoiceByKey(voiceKeyZH) || null;
     return findVoiceByKey(voiceKeyEN) || null;
   }
 
-  /* ===========
-     停止朗讀
-     =========== */
   function stop() {
     try { speechSynthesis.cancel(); } catch (_) {}
-
     activeUtterances = [];
-    isSpeaking = false;
 
     if (currentBtn) {
       currentBtn.setAttribute("data-state", "play");
@@ -721,7 +732,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
   /* =========================
      自動分段：中文用 zh，英文用 en
-     - 混合文字會拆段依序朗讀
      ========================= */
   function splitByLang(text){
     const s = (text || "");
@@ -736,7 +746,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function charType(ch){
-      if (/[\u4e00-\u9fff\u3400-\u4dbf]/.test(ch)) return "zh"; // CJK
+      if (/[\u4e00-\u9fff\u3400-\u4dbf]/.test(ch)) return "zh";
       if (/[A-Za-z]/.test(ch)) return "en";
       return "other";
     }
@@ -744,8 +754,6 @@ document.addEventListener("DOMContentLoaded", function() {
     for (let i=0;i<s.length;i++){
       const ch = s[i];
       const t = charType(ch);
-
-      // other：跟著前一段走（避免標點被丟掉）
       const lang = (t === "other") ? (cur || "en") : t;
 
       if (cur === null) cur = lang;
@@ -758,7 +766,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     flush();
 
-    // 若整段都沒有中英字母，就當英文（避免空）
     return out.length ? out : [{ lang: "en", text: (s.trim()) }];
   }
 
@@ -774,18 +781,17 @@ document.addEventListener("DOMContentLoaded", function() {
       return;
     }
 
-    stop(); // 停掉別的正在播
+    stop();
 
     btn.setAttribute("data-state", "stop");
     btn.setAttribute("aria-pressed", "true");
     currentBtn = btn;
 
-    // 建 utterance queue
     const segs = splitByLang(t);
     activeUtterances = segs.map(seg => {
       const u = new SpeechSynthesisUtterance(seg.text);
 
-      // ✅ 可改：語速/音高（這裡是全局）
+      /* 可改：語速/音高 */
       u.rate = 1.0;
       u.pitch = 1.0;
 
@@ -799,8 +805,6 @@ document.addEventListener("DOMContentLoaded", function() {
       return u;
     });
 
-    // 依序播放
-    isSpeaking = true;
     playNext();
   }
 
@@ -830,7 +834,6 @@ document.addEventListener("DOMContentLoaded", function() {
         textSpan.parentNode.insertBefore(wrap, textSpan);
         wrap.appendChild(textSpan);
       }
-
       if (wrap.querySelector(":scope > button.tts-btn")) return;
 
       const pure = (textSpan.getAttribute("data-tts") || textSpan.textContent || "").trim();
@@ -851,114 +854,87 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   /* =========================
-     H1 右側（靠左）：插入語音選擇 UI
-     - EN 與 ZH 分開
+     Header：在 .md-header__ellipsis 插入按鈕（靠右）
+     面板 portal 到 body，避免被 header overflow 截掉
      ========================= */
-  function ensureVoiceControlsOnAllH1(root){
-    const scope = root || document;
-    const container =
-      scope.querySelector(".md-content .md-content__inner") ||
-      scope.querySelector("main") ||
-      document.body;
-
-    const h1s = container.querySelectorAll("h1");
-    if (!h1s.length) return;
-
-    h1s.forEach(h1 => {
-      if (h1.querySelector(":scope > .tts-voice-mini")) return;
-
-      const mini = document.createElement("span");
-      mini.className = "tts-voice-mini";
-
-      const toggle = document.createElement("button");
-      toggle.className = "tts-voice-toggle";
-      toggle.type = "button";
-      toggle.setAttribute("aria-label", "Choose voices");
-      toggle.innerHTML = `
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M3 10v4c0 1.1.9 2 2 2h3l4 3V5L8 8H5c-1.1 0-2 .9-2 2zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.06c1.48-.74 2.5-2.26 2.5-4.03z"/>
-        </svg>
-      `;
-
-      const panel = document.createElement("div");
-      panel.className = "tts-voice-panel";
-
-      const labelEN = document.createElement("label");
-      labelEN.textContent = "EN";
-      const selEN = document.createElement("select");
-      selEN.className = "tts-voice-picker";
-      selEN.setAttribute("data-voice-kind", "en");
-
-      const labelZH = document.createElement("label");
-      labelZH.textContent = "ZH";
-      const selZH = document.createElement("select");
-      selZH.className = "tts-voice-picker";
-      selZH.setAttribute("data-voice-kind", "zh");
-
-      labelEN.appendChild(selEN);
-      labelZH.appendChild(selZH);
-
-      panel.appendChild(labelEN);
-      panel.appendChild(labelZH);
-
-      mini.appendChild(toggle);
-      mini.appendChild(panel);
-      h1.appendChild(mini);
-
-      // 點喇叭：開/關 + populate
-      toggle.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        warmVoices();
-        ensureVoiceKeys();
-        populatePickers(panel);
-
-        closeAllVoicePanelsExcept(mini);
-        mini.classList.toggle("open");
-
-        if (mini.classList.contains("open")) {
-          setTimeout(() => { try { selEN.focus(); } catch(_) {} }, 0);
-        }
-      });
-
-      // mobile friendly：點 select 前先 warm
-      selEN.addEventListener("pointerdown", warmVoices, { passive: true });
-      selZH.addEventListener("pointerdown", warmVoices, { passive: true });
-
-      selEN.addEventListener("change", () => {
-        voiceKeyEN = selEN.value;
-        safeSetLS(LS_VOICE_EN, voiceKeyEN);
-        syncAllPickers();
-      });
-
-      selZH.addEventListener("change", () => {
-        voiceKeyZH = selZH.value;
-        safeSetLS(LS_VOICE_ZH, voiceKeyZH);
-        syncAllPickers();
-      });
-    });
-
-    // 初次同步一次（即使 voices 還沒載入，也不會壞，onvoiceschanged 會補）
-    warmVoices();
-    ensureVoiceKeys();
-    syncAllPickers();
+  function getHeaderEllipsis(){
+    return document.querySelector(".md-header__ellipsis");
   }
 
-  function closeAllVoicePanelsExcept(mini){
-    document.querySelectorAll(".tts-voice-mini.open").forEach(x => {
-      if (x !== mini) x.classList.remove("open");
+  function ensureHeaderControl(){
+    const ellipsis = getHeaderEllipsis();
+    if (!ellipsis) return false;
+
+    ellipsis.classList.add("tts-ellipsis-flex");
+
+    if (document.getElementById("tts-header-control")) return true;
+
+    const wrap = document.createElement("span");
+    wrap.id = "tts-header-control";
+
+    const toggle = document.createElement("button");
+    toggle.id = "tts-header-voice-toggle";
+    toggle.type = "button";
+    toggle.setAttribute("aria-label", "Choose voices");
+    toggle.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 10v4c0 1.1.9 2 2 2h3l4 3V5L8 8H5c-1.1 0-2 .9-2 2zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.06c1.48-.74 2.5-2.26 2.5-4.03z"/>
+      </svg>
+    `;
+
+    toggle.addEventListener("pointerdown", warmVoices, { passive: true });
+    toggle.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openOrToggleVoicePanel(toggle);
     });
+
+    wrap.appendChild(toggle);
+    ellipsis.appendChild(wrap);
+
+    return true;
   }
 
-  function populatePickers(panel){
-    const voices = getVoices();
+  function ensureVoicePanelPortal(){
+    let panel = document.getElementById("tts-voice-panel-portal");
+    if (panel) return panel;
 
-    const selEN = panel.querySelector('select[data-voice-kind="en"]');
-    const selZH = panel.querySelector('select[data-voice-kind="zh"]');
+    panel = document.createElement("div");
+    panel.id = "tts-voice-panel-portal";
 
-    if (selEN) fillSelect(selEN, voices, "en", voiceKeyEN);
-    if (selZH) fillSelect(selZH, voices, "zh", voiceKeyZH);
+    const labelEN = document.createElement("label");
+    labelEN.textContent = "EN";
+    const selEN = document.createElement("select");
+    selEN.className = "tts-voice-picker";
+    selEN.setAttribute("data-voice-kind", "en");
+    labelEN.appendChild(selEN);
+
+    const labelZH = document.createElement("label");
+    labelZH.textContent = "ZH";
+    const selZH = document.createElement("select");
+    selZH.className = "tts-voice-picker";
+    selZH.setAttribute("data-voice-kind", "zh");
+    labelZH.appendChild(selZH);
+
+    panel.appendChild(labelEN);
+    panel.appendChild(labelZH);
+    document.body.appendChild(panel);
+
+    selEN.addEventListener("pointerdown", warmVoices, { passive: true });
+    selZH.addEventListener("pointerdown", warmVoices, { passive: true });
+
+    selEN.addEventListener("change", () => {
+      voiceKeyEN = selEN.value;
+      safeSetLS(LS_VOICE_EN, voiceKeyEN);
+      syncVoicePanel();
+    });
+    selZH.addEventListener("change", () => {
+      voiceKeyZH = selZH.value;
+      safeSetLS(LS_VOICE_ZH, voiceKeyZH);
+      syncVoicePanel();
+    });
+
+    return panel;
   }
 
   function fillSelect(sel, voices, kind, selectedKey){
@@ -985,7 +961,6 @@ document.addEventListener("DOMContentLoaded", function() {
       sel.appendChild(opt);
     });
 
-    // 若目前選的 key 不在清單，先挑預設
     const exists = list.some(v => voiceKey(v) === selectedKey);
     if (!exists) {
       const fallbackKey =
@@ -1002,18 +977,79 @@ document.addEventListener("DOMContentLoaded", function() {
     sel.value = selectedKey || sel.options[0].value;
   }
 
-  function syncAllPickers(){
-    // 讓每個 H1 的 panel 兩個 select 都一致
-    document.querySelectorAll(".tts-voice-panel").forEach(panel => {
-      populatePickers(panel);
-    });
+  function syncVoicePanel(){
+    const panel = document.getElementById("tts-voice-panel-portal");
+    if (!panel) return;
+
+    const voices = getVoices();
+    const selEN = panel.querySelector('select[data-voice-kind="en"]');
+    const selZH = panel.querySelector('select[data-voice-kind="zh"]');
+
+    if (selEN) fillSelect(selEN, voices, "en", voiceKeyEN);
+    if (selZH) fillSelect(selZH, voices, "zh", voiceKeyZH);
+  }
+
+  function hideVoicePanel(){
+    const panel = document.getElementById("tts-voice-panel-portal");
+    if (!panel) return;
+    panel.classList.remove("open");
+    panel.style.display = "none";
+  }
+
+  function openOrToggleVoicePanel(anchorBtn){
+    const panel = ensureVoicePanelPortal();
+
+    if (panel.classList.contains("open")) {
+      hideVoicePanel();
+      return;
+    }
+
+    warmVoices();
+    ensureVoiceKeys();
+    syncVoicePanel();
+
+    panel.style.display = "flex";
+    panel.classList.add("open");
+
+    requestAnimationFrame(() => positionVoicePanel(anchorBtn, panel));
+  }
+
+  // ✅ 讓面板不超出視窗：必要時往內推、或改成向上開
+  function positionVoicePanel(anchorBtn, panel){
+    if (!anchorBtn || !panel) return;
+
+    const margin = 8;
+    const gap = 8;
+    const r = anchorBtn.getBoundingClientRect();
+
+    // 先放「右對齊 + 向下開」
+    panel.style.left = "0px";
+    panel.style.top = "0px";
+
+    const w = panel.offsetWidth || 320;
+    const h = panel.offsetHeight || 120;
+
+    let left = r.right - w;           // 右對齊按鈕
+    let top  = r.bottom + gap;        // 向下開
+
+    // 左右邊界
+    if (left < margin) left = margin;
+    if (left + w > window.innerWidth - margin) left = window.innerWidth - margin - w;
+
+    // 下方溢出就改向上開
+    if (top + h > window.innerHeight - margin) {
+      top = r.top - gap - h;
+    }
+    // 上方也溢出就夾在視窗內
+    if (top < margin) top = margin;
+
+    panel.style.left = left + "px";
+    panel.style.top  = top + "px";
   }
 
   /* =========================
      反白浮動工具：播放 + 翻譯
-     + 在翻譯框內選取不觸發新翻譯/不消失
      ========================= */
-
   function ensureSelectionPop() {
     let pop = document.getElementById("tts-selection-pop");
     if (pop) return pop;
@@ -1036,9 +1072,8 @@ document.addEventListener("DOMContentLoaded", function() {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-
       const text = getSelectionText();
-      if (!text) return; // ✅ 不強制關閉，避免你要複製時被關掉
+      if (!text) return;
       speakAuto(text, btn);
     });
 
@@ -1113,11 +1148,11 @@ document.addEventListener("DOMContentLoaded", function() {
   async function showSelectionPop() {
     if (!supported()) return;
 
-    // ✅ 若你正在翻譯框內反白（要複製），就完全不處理
+    // ✅ 在翻譯框內選取文字（要複製）就不重新翻譯、不關閉
     if (selectionTouchesPop()) return;
 
     const text = getSelectionText();
-    if (!text) return; // ✅ 不主動關閉，避免干擾複製流程
+    if (!text) return;
 
     const rect = getSelectionRect();
     if (!rect) return;
@@ -1147,11 +1182,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
+  /* =========================
+     全域事件（關面板 / 關翻譯框 / 修正 instant nav）
+     ========================= */
   function bindGlobalEventsOnce(){
     if (globalEventsBound) return;
     globalEventsBound = true;
 
-    // 反白觸發（但在翻譯框內放開滑鼠不觸發）
     document.addEventListener("mouseup", (e) => {
       const pop = getSelectionPopEl();
       if (pop && e.target && pop.contains(e.target)) return;
@@ -1164,76 +1201,130 @@ document.addEventListener("DOMContentLoaded", function() {
       setTimeout(showSelectionPop, 0);
     });
 
-    // 點外面：關閉語音面板；但不關閉翻譯框（你要複製）
+    // ✅ 點外面：關語音面板；點外面也關翻譯框（點在翻譯框內不關）
     document.addEventListener("mousedown", (e) => {
       const t = e.target;
 
-      // 關閉所有 voice panel
-      document.querySelectorAll(".tts-voice-mini.open").forEach(mini => {
-        if (!mini.contains(t)) mini.classList.remove("open");
-      });
+      // voice panel（portal）點外面關
+      const panel = document.getElementById("tts-voice-panel-portal");
+      const toggle = document.getElementById("tts-header-voice-toggle");
+      if (panel && panel.classList.contains("open")) {
+        const insidePanel = panel.contains(t);
+        const insideToggle = toggle && toggle.contains(t);
+        if (!insidePanel && !insideToggle) hideVoicePanel();
+      }
 
-      // 翻譯框：點外面不強制關閉（你若想點外面關閉，把下一行改成啟用 hideSelectionPop）
-      // const pop = getSelectionPopEl(); if (pop && !pop.contains(t)) hideSelectionPop();
+      // selection pop：點外面關
+      const pop = getSelectionPopEl();
+      if (pop && t && !pop.contains(t)) hideSelectionPop();
     }, { passive: true });
 
-    // 捲動/縮放：翻譯框關閉（避免位置錯）
-    window.addEventListener("scroll", hideSelectionPop, true);
-    window.addEventListener("resize", hideSelectionPop);
+    window.addEventListener("resize", () => {
+      hideSelectionPop();
+      const panel = document.getElementById("tts-voice-panel-portal");
+      const toggle = document.getElementById("tts-header-voice-toggle");
+      if (panel && panel.classList.contains("open") && toggle) {
+        positionVoicePanel(toggle, panel);
+      }
+    });
 
-    // voices 可能延遲載入：載入後同步所有 pickers
+    window.addEventListener("scroll", hideSelectionPop, true);
+
+    // voices 可能延遲載入：載入後同步下拉
     if ("speechSynthesis" in window) {
       speechSynthesis.onvoiceschanged = () => {
         ensureVoiceKeys();
-        syncAllPickers();
+        syncVoicePanel();
       };
     }
 
-    // Material instant navigation：換頁後重跑
-    document.addEventListener("navigation:complete", scheduleEnhance);
+    // Material for MkDocs instant nav：最可靠 hook
+    if (window.document$ && typeof window.document$.subscribe === "function") {
+      window.document$.subscribe(() => scheduleEnhance(true));
+    }
+    // fallback
+    document.addEventListener("navigation:complete", () => scheduleEnhance(true));
   }
 
-  /* =========================
-     修正「有時候要重整才出現」：
-     - 用 MutationObserver 監看內容區
-     - 每次內容變更後，重新補齊 h1 voice UI / .tts buttons
-     ========================= */
   function getContentRoot(){
-    return document.querySelector(".md-content .md-content__inner") || document.querySelector("main") || document.body;
+    return document.querySelector(".md-content .md-content__inner")
+        || document.querySelector(".md-content")
+        || document.querySelector("main")
+        || document.body;
   }
 
-  function scheduleEnhance(){
-    if (scheduled) return;
-    scheduled = true;
-    requestAnimationFrame(() => {
-      scheduled = false;
-      enhance();
-    });
-  }
-
-  function enhance(){
+  function enhanceOnce(){
     if (!supported()) return;
-    const root = getContentRoot();
 
+    // 內容區：句子按鈕
+    const root = getContentRoot();
     attachSentenceButtons(root);
-    ensureVoiceControlsOnAllH1(root);
+
+    // header：語音按鈕（靠右）
+    ensureHeaderControl();
+    ensureVoicePanelPortal();
+
+    // selection pop
     ensureSelectionPop();
   }
 
+  // ✅ retry：解決「有時候要重整才出現」（instant nav DOM 還沒塞完）
+  function enhanceWithRetry(tries){
+    enhanceOnce();
+
+    const ellipsis = getHeaderEllipsis();
+    const hasHeaderBtn = !!document.getElementById("tts-header-control");
+    const ready = !!ellipsis && hasHeaderBtn;
+
+    if (!ready && tries < 12) {
+      setTimeout(() => enhanceWithRetry(tries + 1), 120);
+    }
+  }
+
+  function scheduleEnhance(force){
+    if (scheduled && !force) return;
+    scheduled = true;
+
+    requestAnimationFrame(() => {
+      scheduled = false;
+      warmVoices();
+      ensureVoiceKeys();
+      syncVoicePanel();
+      enhanceWithRetry(0);
+      startObserver();
+    });
+  }
+
   function startObserver(){
-    if (observer) return;
-    const root = getContentRoot();
-    observer = new MutationObserver(() => scheduleEnhance());
-    observer.observe(root, { childList: true, subtree: true });
+    const target = getContentRoot();
+    if (!target) return;
+
+    if (observer && observerTarget === target) return;
+
+    if (observer) {
+      try { observer.disconnect(); } catch (_) {}
+      observer = null;
+      observerTarget = null;
+    }
+
+    observerTarget = target;
+    observer = new MutationObserver(() => scheduleEnhance(false));
+    observer.observe(target, { childList: true, subtree: true });
   }
 
   function init(){
     if (!supported()) return;
     bindGlobalEventsOnce();
     warmVoices();
-    enhance();
+    ensureVoiceKeys();
+    scheduleEnhance(true);
     startObserver();
   }
+
+  // 對外暴露：避免重複 include 時，後面的 script 只需要觸發 enhance
+  window.__TTS_TOOLKIT__ = {
+    scheduleEnhance: () => scheduleEnhance(true)
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
