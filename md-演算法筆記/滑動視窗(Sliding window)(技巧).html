@@ -380,17 +380,11 @@ document.addEventListener("DOMContentLoaded", function() {
 <!--
 把整段放進你的 tts.md（snippets）即可
 
-這版變更：
-- ✅ 亮色模式時：header 的「選聲音按鈕」圓形底色改成「較深的主題色」，圖示為白色
-- ✅ 暗色模式維持原本透明/跟隨主題
-
-其餘功能同前：
-- 句子後面播放鍵（CSS 畫圖示）
-- 反白任意文字：跳出「播放 + 中文翻譯」
-- 點外面關翻譯框；點翻譯框內不關；翻譯框內反白不觸發
-- header 右側（.md-header__ellipsis 內靠右）提供 EN/ZH 自製 dropdown
-- 中文/英文分開選語音，自動切分朗讀
-- 修正 Material instant navigation 偶發要重整：retry + MutationObserver
+本版依你最新要求修改：
+1) #tts-header-voice-toggle svg 改成 20px
+2) 黑暗模式（dracula）時：喇叭圖示顏色 = 內文文字色（用 currentColor / md-default-fg-color）
+   - 同時維持：無邊框、hover 不變色
+   - 亮色模式：圈圈底色較深主題色、圖示白色（不變）
 -->
 
 <style>
@@ -477,9 +471,12 @@ document.addEventListener("DOMContentLoaded", function() {
   min-width: 0;
 }
 
-/* 我們插入的 header 控制容器 */
+/* 我們插入的 header 控制容器（你指定） */
 #tts-header-control{
-  margin-left: auto;              /* ✅ 靠右 */
+  margin-left: auto;
+  margin-right: -19px;            /* ✅ 依你指定 */
+  /* transform: translateY(-1px);    ✅ 依你指定 */
+
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -487,45 +484,57 @@ document.addEventListener("DOMContentLoaded", function() {
   line-height: 1.2;
 }
 
-/* ===== Header 小喇叭按鈕（預設：暗色/通用）===== */
+/* =========================
+   Header 喇叭按鈕：無邊框、hover 不變色
+   ========================= */
 #tts-header-voice-toggle{
-  width: 30px;                    /* ✅ 可改：喇叭大小 */
+  width: 30px;                    /* ✅ 可改：圈圈大小 */
   height: 30px;
   border-radius: 999px;
-  border: 1px solid var(--md-default-fg-color--lightest, rgba(0,0,0,.2));
+
+  border: 0 !important;           /* ✅ 無邊框 */
   background: transparent;
-  color: var(--md-primary-fg-color, currentColor);
+  color: inherit;                 /* ✅ 重要：讓暗色模式可跟隨內文色 */
+
   cursor: pointer;
   display: inline-grid;
   place-items: center;
   flex: 0 0 auto;
 }
+
+/* hover 不變色、不變背景 */
 #tts-header-voice-toggle:hover{
-  color: var(--md-accent-fg-color, var(--md-primary-fg-color, currentColor));
+  color: inherit !important;
+  background: inherit !important;
 }
+
+/* focus 保留可視化（可改） */
 #tts-header-voice-toggle:focus-visible{
   outline: 2px solid var(--md-accent-fg-color, currentColor);
   outline-offset: 2px;
 }
+
+/* ✅ 你指定：SVG 改 20px */
 #tts-header-voice-toggle svg{
-  width: 20px;
-  height: 20px;
+  width: 30px;                    /* ✅ 可改：圖示大小 */
+  height: 30px;
   display:block;
-  fill: currentColor;
+  fill: currentColor !important;
 }
 
-/* ✅ 亮色模式：圓形底色改成「較深的主題色」，圖示白色
-   Material 亮色通常是 default/light 方案；你如果有自訂 scheme 名稱，也可再補 selector
-*/
+/* 亮色模式：圈圈底色較深主題色、圖示白色 */
 [data-md-color-scheme="default"] #tts-header-voice-toggle,
 [data-md-color-scheme="light"]   #tts-header-voice-toggle{
-  background: var(--md-primary-fg-color, #5e35b1); /* ✅ 主題色（較深） */
-  border-color: transparent;
-  color: #fff;                                     /* ✅ 白色圖示 */
+  background: var(--md-primary-fg-color, #5e35b1) !important;
+  color: #fff !important;
 }
-[data-md-color-scheme="default"] #tts-header-voice-toggle:hover,
-[data-md-color-scheme="light"]   #tts-header-voice-toggle:hover{
-  background: var(--md-accent-fg-color, #5e35b1);   /* ✅ hover 用 accent（同色也行） */
+
+/* ✅ 你指定：黑暗模式（dracula）時，喇叭顏色 = 內文文字色
+   做法：使用 md-default-fg-color（若沒有則 currentColor）
+*/
+[data-md-color-scheme="dracula"] #tts-header-voice-toggle{
+  background: transparent !important;
+  color: var(--md-default-fg-color, currentColor) !important;
 }
 
 /* =========================
@@ -544,14 +553,13 @@ document.addEventListener("DOMContentLoaded", function() {
   border: 1px solid var(--md-default-fg-color--lightest, rgba(255,255,255,.18));
   box-shadow: 0 10px 30px rgba(0,0,0,.25);
 
-  font-size: 1rem;                 /* ✅ 與內文一致 */
+  font-size: 1rem;
   font-weight: normal;
 
-  /* ✅ 不超出視窗 */
   max-width: calc(100vw - 16px);
   box-sizing: border-box;
 
-  max-height: min(60vh, calc(100vh - 120px)); /* ✅ 可改 */
+  max-height: min(60vh, calc(100vh - 120px));
   overflow: auto;
   overscroll-behavior: contain;
 }
@@ -564,7 +572,6 @@ document.addEventListener("DOMContentLoaded", function() {
   to  { transform: scale(1); opacity: 1; }
 }
 
-/* panel 內排版 */
 .tts-vp-row{
   display: grid;
   grid-template-columns: 36px 1fr;
@@ -578,7 +585,6 @@ document.addEventListener("DOMContentLoaded", function() {
   user-select: none;
 }
 
-/* dropdown button */
 .tts-dd-btn{
   width: 100%;
   display: inline-flex;
@@ -614,7 +620,6 @@ document.addEventListener("DOMContentLoaded", function() {
   flex: 0 0 auto;
 }
 
-/* dropdown list（展開在 panel 內） */
 .tts-dd-list{
   margin-top: 8px;
   border-radius: 12px;
@@ -622,7 +627,7 @@ document.addEventListener("DOMContentLoaded", function() {
   background: rgba(0,0,0,.18);
   overflow: auto;
 
-  max-height: min(42vh, 320px); /* ✅ 可改：清單高度 */
+  max-height: min(42vh, 320px);
   display: none;
 }
 .tts-dd.open .tts-dd-list{ display: block; }
@@ -702,7 +707,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const TRANSLATE_TO = "zh-TW";
   const TRANSLATE_FROM = "en"; // 也可改 "auto"
 
-  const MAX_VOICES_RENDER = 2000; // ✅ 可改：最多渲染 voice 數
+  const MAX_VOICES_RENDER = 2000;
   /* ========================= */
 
   let currentBtn = null;
@@ -815,9 +820,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  /* =========================
-     自動分段：中文用 zh，英文用 en
-     ========================= */
   function splitByLang(text){
     const s = (text || "");
     const out = [];
@@ -903,9 +905,6 @@ document.addEventListener("DOMContentLoaded", function() {
     try { speechSynthesis.speak(u); } catch (_) { stop(); }
   }
 
-  /* =========================
-     句子按鈕：綁到 .tts
-     ========================= */
   function attachSentenceButtons(root){
     const scope = root || document;
     scope.querySelectorAll(".tts").forEach(textSpan => {
@@ -935,9 +934,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  /* =========================
-     Header：塞進 .md-header__ellipsis
-     ========================= */
   function getHeaderEllipsis(){
     return document.querySelector(".md-header__ellipsis");
   }
@@ -947,7 +943,6 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!ellipsis) return false;
 
     ellipsis.classList.add("tts-ellipsis-flex");
-
     if (document.getElementById("tts-header-control")) return true;
 
     const wrap = document.createElement("span");
@@ -976,16 +971,12 @@ document.addEventListener("DOMContentLoaded", function() {
     return true;
   }
 
-  /* =========================
-     Voice Panel：自製 dropdown（不使用 <select>）
-     ========================= */
   function ensureVoicePanelPortal(){
     let panel = document.getElementById("tts-voice-panel-portal");
     if (panel) return panel;
 
     panel = document.createElement("div");
     panel.id = "tts-voice-panel-portal";
-
     panel.appendChild(makeDropdownRow("EN", "en"));
     panel.appendChild(makeDropdownRow("ZH", "zh"));
 
@@ -1063,7 +1054,6 @@ document.addEventListener("DOMContentLoaded", function() {
   function fillDropdown(dd, voices, kind, selectedKey){
     const btnTxt = dd.querySelector(".tts-dd-btn .txt");
     const list = dd.querySelector(".tts-dd-list");
-
     list.innerHTML = "";
 
     const filtered = (kind === "zh")
@@ -1168,9 +1158,6 @@ document.addEventListener("DOMContentLoaded", function() {
     panel.style.top  = top + "px";
   }
 
-  /* =========================
-     反白浮動工具：播放 + 翻譯
-     ========================= */
   function ensureSelectionPop() {
     let pop = document.getElementById("tts-selection-pop");
     if (pop) return pop;
@@ -1204,9 +1191,7 @@ document.addEventListener("DOMContentLoaded", function() {
     return pop;
   }
 
-  function getSelectionPopEl() {
-    return document.getElementById("tts-selection-pop");
-  }
+  function getSelectionPopEl() { return document.getElementById("tts-selection-pop"); }
 
   function nodeInsidePop(node, pop) {
     if (!node || !pop) return false;
@@ -1301,9 +1286,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  /* =========================
-     全域事件（關面板 / 關翻譯框 / 修正 instant nav）
-     ========================= */
   function bindGlobalEventsOnce(){
     if (globalEventsBound) return;
     globalEventsBound = true;
@@ -5960,7 +5942,7 @@ is now available!
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "navigation.indexes", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.tabs", "navigation.top", "navigation.tracking", "announce.dismiss", "sitemap", "navigation.tabs", "navigation.top", "navigation.instant", "navigation.indexes", "toc.follow", "content.tabs.link", "search.share", "content.code.copy", "content.code.annotations", "content.action.edit", "content.action.view", "content.tooltips"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.tabs", "navigation.top", "navigation.tracking", "announce.dismiss", "toc.follow", "content.tabs.link", "search.share", "content.code.copy", "content.code.annotations", "content.action.edit", "content.action.view", "content.tooltips"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
