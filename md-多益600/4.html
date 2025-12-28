@@ -380,11 +380,10 @@ document.addEventListener("DOMContentLoaded", function() {
 <!--
 把整段放進你的 tts.md（snippets）即可
 
-本版依你最新要求修改：
-1) #tts-header-voice-toggle svg 改成 20px
-2) 黑暗模式（dracula）時：喇叭圖示顏色 = 內文文字色（用 currentColor / md-default-fg-color）
-   - 同時維持：無邊框、hover 不變色
-   - 亮色模式：圈圈底色較深主題色、圖示白色（不變）
+你指定「用這份程式碼改」+ 新需求：
+✅ 亮色模式：語音清單改成正常白底，只有目前使用中的項目(active)變暗
+✅ 暗色模式（dracula）不動
+✅ 保留你這份程式碼的其他行為（header 喇叭、EN/ZH 分開選、反白翻譯/播放、點旁邊關閉但點翻譯框內不關閉…）
 -->
 
 <style>
@@ -474,8 +473,8 @@ document.addEventListener("DOMContentLoaded", function() {
 /* 我們插入的 header 控制容器（你指定） */
 #tts-header-control{
   margin-left: auto;
-  margin-right: -19px;            /* ✅ 依你指定 */
-  /* transform: translateY(-1px);    ✅ 依你指定 */
+  margin-right: -19px;            /* ✅ 依你指定（要 -20 可改） */
+  /* transform: translateY(-1px); */ /* ✅ 需要就取消註解 */
 
   display: inline-flex;
   align-items: center;
@@ -516,7 +515,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 /* ✅ 你指定：SVG 改 20px */
 #tts-header-voice-toggle svg{
-  width: 30px;                    /* ✅ 可改：圖示大小 */
+  width: 30px;                    /* ✅ 固定 30px */
   height: 30px;
   display:block;
   fill: currentColor !important;
@@ -529,9 +528,7 @@ document.addEventListener("DOMContentLoaded", function() {
   color: #fff !important;
 }
 
-/* ✅ 你指定：黑暗模式（dracula）時，喇叭顏色 = 內文文字色
-   做法：使用 md-default-fg-color（若沒有則 currentColor）
-*/
+/* ✅ 你指定：黑暗模式（dracula）時，喇叭顏色 = 內文文字色 */
 [data-md-color-scheme="dracula"] #tts-header-voice-toggle{
   background: transparent !important;
   color: var(--md-default-fg-color, currentColor) !important;
@@ -648,7 +645,7 @@ document.addEventListener("DOMContentLoaded", function() {
   outline: 1px solid rgba(255,255,255,.18);
 }
 
-/* dracula：更黑 */
+/* dracula：更黑（你說暗色模式不需動） */
 [data-md-color-scheme="dracula"] #tts-voice-panel-portal{
   background: #1b1d24;
   border-color: rgba(255,255,255,.18);
@@ -656,6 +653,48 @@ document.addEventListener("DOMContentLoaded", function() {
 [data-md-color-scheme="dracula"] .tts-dd-list{
   background: #13151b;
   border-color: rgba(255,255,255,.18);
+}
+
+/* =========================
+   ✅ 亮色模式：語音清單改白底；只有 active 變暗
+   ========================= */
+[data-md-color-scheme="default"] #tts-voice-panel-portal,
+[data-md-color-scheme="light"]   #tts-voice-panel-portal{
+  background: #fff;
+  border-color: rgba(0,0,0,.12);
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+  color: rgba(0,0,0,.87);
+}
+[data-md-color-scheme="default"] #tts-voice-panel-portal .tts-vp-row .lbl,
+[data-md-color-scheme="light"]   #tts-voice-panel-portal .tts-vp-row .lbl{
+  color: rgba(0,0,0,.72);
+}
+[data-md-color-scheme="default"] #tts-voice-panel-portal .tts-dd-btn,
+[data-md-color-scheme="light"]   #tts-voice-panel-portal .tts-dd-btn{
+  background: #fff;
+  color: rgba(0,0,0,.87);
+  border-color: rgba(0,0,0,.18);
+}
+[data-md-color-scheme="default"] #tts-voice-panel-portal .tts-dd-list,
+[data-md-color-scheme="light"]   #tts-voice-panel-portal .tts-dd-list{
+  background: #fff;                 /* ✅ 白色 */
+  border-color: rgba(0,0,0,.12);
+}
+[data-md-color-scheme="default"] #tts-voice-panel-portal .tts-dd-item,
+[data-md-color-scheme="light"]   #tts-voice-panel-portal .tts-dd-item{
+  background: #fff;                 /* ✅ 預設白色 */
+  color: rgba(0,0,0,.87);
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+[data-md-color-scheme="default"] #tts-voice-panel-portal .tts-dd-item:hover,
+[data-md-color-scheme="light"]   #tts-voice-panel-portal .tts-dd-item:hover{
+  background: rgba(0,0,0,.06);
+}
+/* ✅ 只有當前使用中的 active 變暗 */
+[data-md-color-scheme="default"] #tts-voice-panel-portal .tts-dd-item.active,
+[data-md-color-scheme="light"]   #tts-voice-panel-portal .tts-dd-item.active{
+  background: rgba(0,0,0,.16);
+  outline: 1px solid rgba(0,0,0,.16);
 }
 
 /* =========================
@@ -6233,7 +6272,7 @@ A) <span class="tts">Several fishing boats are docked.</p>
 <p>D) <span class="tts">Reserve spots on the shuttle bus an hour early.</p>
 <h2 id="107">107<a class="headerlink" href="#107" title="Permanent link"></a></h2>
 <p><img alt="alt text" src="images/4/image-18.png" /></p>
-<p><span class="tts">Guests of the hotel may make use of the free housekeeping and laundry services by dialing "5" on the phones located in each room.</p>
+<p><span class="tts">Guests of the hotel may make use of the free housekeeping and laundry services by <ins>dialing</ins> "5" on the phones located in each room.</p>
 <p><img alt="alt text" src="images/4/image-19.png" /></p>
 <p>A) <span class="tts">reading</p>
 <p>B) <span class="tts">dialing</p>
@@ -6241,7 +6280,7 @@ A) <span class="tts">Several fishing boats are docked.</p>
 <p>D) <span class="tts">communicating</p>
 <h2 id="114">114<a class="headerlink" href="#114" title="Permanent link"></a></h2>
 <p><img alt="alt text" src="images/4/image-17.png" /></p>
-<p><span class="tts">Regarding the cost of the package, it includes the cost of a week-long stay at the ski resort and complimentary breakfast.</p>
+<p><span class="tts"><ins>Regarding</ins> the cost of the package, it includes the cost of a week-long stay at the ski resort and complimentary breakfast.</p>
 <p>A) <span class="tts">Despite</p>
 <p>B) <span class="tts">Regarding</p>
 <p>C) <span class="tts">So as to</p>
